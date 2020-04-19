@@ -28,8 +28,8 @@ lib64
 # Unit test / coverage reports
 .coverage
 .tox
-.coverage
-.coverage.*
-nosetests.xml
-htmlcov
 
+# cache
+__pycache__
+.mypy_cache
+.pytest_cache
