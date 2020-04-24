@@ -5,7 +5,7 @@ from tempfile import gettempdir
 basedir = Path(__file__).parent
 
 
-class ProductionConfig:
+class DefaultConfig:
     APP_NAME = 'quart-backend'
     DEBUG = False
     TESTING = False
@@ -14,17 +14,21 @@ class ProductionConfig:
     LOG_BACKTRACE = False
 
 
-class DevelopmentConfig(ProductionConfig):
+class DevelopmentConfig(DefaultConfig):
     DEBUG = True
-    LOG_FILENAME = Path(gettempdir(), f'{ProductionConfig.APP_NAME}.log')
+    LOG_FILENAME = Path(gettempdir(), f'{DefaultConfig.APP_NAME}.log')
     LOG_LEVEL = 'DEBUG'
     LOG_BACKTRACE = True
 
 
-class TestingConfig(ProductionConfig):
+class TestingConfig(DefaultConfig):
     TESTING = True
     LOG_LEVEL = 'DEBUG'
     LOG_BACKTRACE = True
+
+
+class ProductionConfig(DefaultConfig):
+    pass
 
 
 config = {
