@@ -2,38 +2,13 @@ import os
 from pathlib import Path
 from tempfile import gettempdir
 
-basedir = Path(__file__).parent
+# .env was already read in create_app
 
-
-class DefaultConfig:
-    APP_NAME = 'quart-backend'
-    DEBUG = False
-    TESTING = False
-    SECRET_KEY = os.environ.get('SECRET_KEY') or os.urandom(64)
-    LOG_LEVEL = 'INFO'
-    LOG_BACKTRACE = False
-
-
-class DevelopmentConfig(DefaultConfig):
-    DEBUG = True
-    LOG_FILENAME = Path(gettempdir(), f'{DefaultConfig.APP_NAME}.log')
-    LOG_LEVEL = 'DEBUG'
-    LOG_BACKTRACE = True
-
-
-class TestingConfig(DefaultConfig):
-    TESTING = True
-    LOG_LEVEL = 'DEBUG'
-    LOG_BACKTRACE = True
-
-
-class ProductionConfig(DefaultConfig):
-    pass
-
-
-config = {
-    'default': ProductionConfig,
-    'development': DevelopmentConfig,
-    'testing': TestingConfig,
-    'production': ProductionConfig,
-}
+APP_NAME = 'Quart API'
+ENV = os.environ['ENV'].lower()
+SECRET_KEY = os.getenv('SECRET_KEY') or os.urandom(64)
+TESTING = ENV == 'testing'
+DEBUG = ENV != 'production'
+LOG_LEVEL = DEBUG and 'DEBUG' or 'INFO'
+LOG_BACKTRACE = DEBUG
+LOG_FILENAME = Path(gettempdir(), 'quart_api.log')
