@@ -7,7 +7,8 @@ from tempfile import gettempdir
 APP_NAME = 'Quart API'
 
 ENV = os.environ['ENV'].lower()
-assert ENV in ('development', 'testing', 'production')
+if ENV not in ('development', 'testing', 'production'):
+    raise ValueError(f'ENV="{ENV}" but it should be "development", "testing" or "production"')
 TESTING = ENV == 'testing'
 DEBUG = ENV != 'production'
 

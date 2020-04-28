@@ -1,6 +1,7 @@
 import logging
 import sys
 from pathlib import Path
+from typing import Union
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -31,12 +32,15 @@ def set_logger(app: Quart) -> None:
     app.logger.addHandler(handler)
 
 
-def create_app(env_filename: str = '.env') -> Quart:
+def create_app(env_filename: Union[str, Path] = '.env') -> Quart:
     '''
     Application factory pattern
     '''
     app = Quart(__name__)
-    assert Path(env_filename).exists()
+    if not Path(env_filename).exists():
+        import errno
+        import os
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), str(env_filename))
     load_dotenv(env_filename)
     app.config.from_pyfile('config.py')
 
