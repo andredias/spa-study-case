@@ -1,3 +1,4 @@
+from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -5,11 +6,11 @@ from app import create_app
 
 
 @pytest.fixture
-def env_file(tmp_path):
+def env_file(tmp_path: Path) -> Path:
     return tmp_path / '.env'
 
 
-def test_non_existent_env(env_file):
+def test_non_existent_env(env_file: Path) -> None:
     '''
     .env file does not exist
     '''
@@ -18,9 +19,9 @@ def test_non_existent_env(env_file):
 
 
 @patch.dict('os.environ')  # prevents load_dotenv from modifying os.environ for other tests
-def test_wrong_env(env_file):
+def test_wrong_env(env_file: Path) -> None:
     '''
-    ENV values something different from development, testing or production
+    ENV is something different than development, testing or production
     '''
     env_file.write_text('ENV=something_else')
     with pytest.raises(ValueError):
