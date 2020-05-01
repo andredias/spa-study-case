@@ -1,6 +1,6 @@
 check:
 	@echo
-	yapf --diff --recursive --style yapf.ini --exclude .venv --exclude '*/.venv' .
+	yapf --diff --recursive --style yapf.ini --exclude '**.venv' .
 	@echo
 	mypy quart_api
 	@echo
