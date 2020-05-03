@@ -37,10 +37,10 @@ def create_app(env_filename: Union[str, Path] = '.env') -> Quart:
     Application factory pattern
     '''
     app = Quart(__name__)
-    if not Path(env_filename).exists():
-        import errno
-        import os
-        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), str(env_filename))
+
+    # a .env file is not mandatory.
+    # You can specify envvar parameters by other means
+    # as long as they are available before app.config.from_pyfile is called
     load_dotenv(env_filename)
     app.config.from_pyfile('config.py')
 
