@@ -1,15 +1,11 @@
 run:
-	QUART_APP="app:create_app()" quart run --port 8080
+	hypercorn --reload --config=hypercorn.toml "app:create_app()"
+	# curl --insecure -v https://127.0.0.1:8443/hello
+	# http --verify no https://localhost:8443/hello
 
 
 test:
 	pytest
-
-
-live_server:
-	hypercorn --certfile=cert/server.pem --keyfile=cert/server.key --config=hypercorn.toml "app:create_app()"
-	# curl --cacert certificates/client.pem https://127.0.0.1:8443/hello
-	# http --verify no http://localhost:8443/hello
 
 
 docker_build:
