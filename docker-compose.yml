@@ -1,0 +1,36 @@
+version: "3.3"
+
+networks:
+    web:
+        driver: bridge
+    internal:
+        driver: bridge
+
+services:
+    caddy: # see https://hub.docker.com/_/caddy
+        container_name: caddy
+        image: "caddy:latest"
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./caddy/data:/data/caddy
+            - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+            - ./frontend/dist:/spa_files
+        networks:
+            - web
+            - internal
+
+    quart_api:
+        container_name: quart_api
+        build: ./backend/quart_api
+        networks:
+            - internal
+        ports:
+            - "5001:8443"
+        volumes:
+            - ./caddy/data/certificates/local/localhost/:/app/cert
+        environment:
+            CERTFILE: "/app/cert/localhost.crt"
+            KEYFILE: "/app/cert/localhost.key"
+            ENV: "production"

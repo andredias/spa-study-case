@@ -33,3 +33,6 @@ lib64
 __pycache__
 .mypy_cache
 .pytest_cache
+
+# Caddy local data
+caddy/data/**/local

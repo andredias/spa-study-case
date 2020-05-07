@@ -1,0 +1,17 @@
+localhost {
+    encode gzip zstd
+    file_server {
+        root /spa_files
+    }
+
+    # see https://github.com/caddyserver/caddy/issues/3266#issuecomment-625233663
+    route /api* {
+        uri strip_prefix /api
+        reverse_proxy quart_api:8443 {
+            transport http {
+                tls
+                tls_insecure_skip_verify
+            }
+        }
+    }
+}
