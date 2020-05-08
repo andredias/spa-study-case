@@ -29,9 +29,5 @@ services:
         image: quart_api
         networks:
             - internal
-        volumes:
-            - ./caddy/data/certificates/local/localhost/:/app/cert
         environment:
-            CERTFILE: "/app/cert/localhost.crt"
-            KEYFILE: "/app/cert/localhost.key"
             ENV: "production"

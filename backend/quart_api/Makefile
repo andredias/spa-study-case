@@ -13,6 +13,4 @@ docker_build:
 
 
 docker_run: docker_build
-	docker run -it --rm -p 8443:8443 -p 4433:4433 \
-	           -e ENV=production -e CERTFILE=cert/server.pem -e KEYFILE=cert/server.key \
-	           -v `pwd`/cert:/app/cert quart_api
+	docker run -it --rm -p 8443:8443 -p 4433:4433 -e ENV=production quart_api

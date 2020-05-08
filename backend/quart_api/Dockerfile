@@ -26,10 +26,11 @@ ENV PATH=/venv/bin:${PATH}
 WORKDIR /app
 RUN chown -R nobody:nobody /app
 COPY --chown=nobody:nobody app /app
+COPY --chown=nobody:nobody cert /app/cert
 COPY --chown=nobody:nobody hypercorn.toml .
 
 USER nobody
 
 EXPOSE 8080 8443
 ENTRYPOINT ["dumb-init", "--"]
-CMD hypercorn --certfile=${CERTFILE} --keyfile=${KEYFILE} --config=hypercorn.toml ".:create_app()"
+CMD ["hypercorn", "--config=hypercorn.toml", ".:create_app()"]
