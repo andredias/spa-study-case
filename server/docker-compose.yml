@@ -16,18 +16,19 @@ services:
         volumes:
             - ./caddy/data:/data/caddy
             - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-            - ./frontend/dist:/spa_files
+            - ../frontend/dist:/spa_files
         networks:
             - web
             - internal
+        environment:
+            DEFAULT_API: "quart_api"
 
     quart_api:
         container_name: quart_api
-        build: ./backend/quart_api
+        build: ../backend/quart_api
+        image: quart_api
         networks:
             - internal
-        ports:
-            - "5001:8443"
         volumes:
             - ./caddy/data/certificates/local/localhost/:/app/cert
         environment:
