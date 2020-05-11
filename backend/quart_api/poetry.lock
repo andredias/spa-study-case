@@ -323,29 +323,6 @@ python-versions = "*"
 version = "0.10.0"
 
 [[package]]
-category = "dev"
-description = "#1 quality TLS certs while you wait, for the discerning tester"
-name = "trustme"
-optional = false
-python-versions = "*"
-version = "0.6.0"
-
-[package.dependencies]
-cryptography = "*"
-idna = "*"
-
-[[package]]
-category = "dev"
-description = "A simple tool that generates certificates for local testing"
-name = "trustme-cli"
-optional = false
-python-versions = ">=3.6"
-version = "2020.2.28"
-
-[package.dependencies]
-trustme = "*"
-
-[[package]]
 category = "main"
 description = "Backported and Experimental Type Hints for Python 3.5+"
 name = "typing-extensions"
@@ -584,14 +561,6 @@ toml = [
     {file = "toml-0.10.0-py2.7.egg", hash = "sha256:f1db651f9657708513243e61e6cc67d101a39bad662eaa9b5546f789338e07a3"},
     {file = "toml-0.10.0-py2.py3-none-any.whl", hash = "sha256:235682dd292d5899d361a811df37e04a8828a5b1da3115886b73cf81ebc9100e"},
     {file = "toml-0.10.0.tar.gz", hash = "sha256:229f81c57791a41d65e399fc06bf0848bab550a9dfd5ed66df18ce5f05e73d5c"},
-]
-trustme = [
-    {file = "trustme-0.6.0-py2.py3-none-any.whl", hash = "sha256:b0581d8f65beade785a721cf7986685a3ffad7ff26236a6d9b54d13b04301ec6"},
-    {file = "trustme-0.6.0.tar.gz", hash = "sha256:9dfb18b568729d0219f758cddca1a91bab59f62ca41ee0e8acce5e657ec97b6c"},
-]
-trustme-cli = [
-    {file = "trustme_cli-2020.2.28-py3-none-any.whl", hash = "sha256:310f0be138ee2f78f08cd277293bb0b70d8ddaf4b1eb3f065a65c0c533a01f6c"},
-    {file = "trustme_cli-2020.2.28.tar.gz", hash = "sha256:ce4a9589fbf1eaaae8c4231af0994f2dc3874269e5b8aee1537d1e5fc15cce71"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.7.4.2-py2-none-any.whl", hash = "sha256:f8d2bd89d25bc39dabe7d23df520442fa1d8969b82544370e03d88b5a591c392"},
