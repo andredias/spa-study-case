@@ -33,6 +33,6 @@ def docker_compose():
 
 
 @fixture
-async def client(docker_compose) -> AsyncClient:
+async def client(docker_compose: None) -> AsyncClient:
     async with AsyncClient(base_url='https://localhost', verify=False, http2=True) as client:
         yield client

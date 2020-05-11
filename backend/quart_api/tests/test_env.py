@@ -27,7 +27,7 @@ def test_no_env_envvar(env_file: Path) -> None:
     '''
     ENV environment variable is not defined at all
     '''
-    os.environ['LOG_LEVEL'] = 'INFO'  # prevents create_app from logging durint testing
+    os.environ['LOG_LEVEL'] = 'INFO'  # prevents create_app from logging during testing
     with pytest.raises(KeyError):
         app = create_app(env_file)  # noqa: F841
 
