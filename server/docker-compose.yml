@@ -3,8 +3,9 @@ version: "3.3"
 networks:
     web:
         driver: bridge
-    internal:
+    backend:
         driver: bridge
+        internal: true
 
 services:
     caddy: # see https://hub.docker.com/_/caddy
@@ -14,20 +15,20 @@ services:
             - "80:80"
             - "443:443"
         volumes:
-            - ./caddy/data:/data/caddy
             - ./caddy/Caddyfile:/etc/caddy/Caddyfile
-            - ../frontend/dist:/spa_files
+            - ./caddy/data:/data/caddy
+            - ../frontend/dist:/dist
         networks:
             - web
-            - internal
+            - backend
         environment:
-            DEFAULT_API: "quart_api"
+            - DEFAULT_BACKEND_API
 
     quart_api:
         container_name: quart_api
         build: ../backend/quart_api
         image: quart_api
         networks:
-            - internal
-        environment:
-            ENV: "production"
+            - backend
+        env_file:
+            - .env

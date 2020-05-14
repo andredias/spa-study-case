@@ -1,18 +1,6 @@
 localhost {
-    encode gzip zstd
-    file_server {
-        root /spa_files
-    }
 
-    route /api* {
-        uri strip_prefix /api
-        reverse_proxy {$DEFAULT_API}:8443 {
-            transport http {
-                tls
-                tls_insecure_skip_verify
-            }
-        }
-    }
+    uri replace /api/ /{$DEFAULT_BACKEND_API}/ 1
 
     route /quart_api* {
         uri strip_prefix /quart_api
@@ -22,5 +10,15 @@ localhost {
                 tls_insecure_skip_verify
             }
         }
+    }
+
+    @compress_exts {
+        not path *.gif *.jpg *.png
+    }
+
+    encode @compress_exts gzip zstd
+
+    file_server {
+        root /dist
     }
 }
