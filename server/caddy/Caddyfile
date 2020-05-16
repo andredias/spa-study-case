@@ -2,6 +2,16 @@ localhost {
 
     uri replace /api/ /{$DEFAULT_BACKEND_API}/ 1
 
+    route /fastapi_api* {
+        uri strip_prefix /fastapi_api
+        reverse_proxy fastapi_api:8443 {
+            transport http {
+                tls
+                tls_insecure_skip_verify
+            }
+        }
+    }
+
     route /quart_api* {
         uri strip_prefix /quart_api
         reverse_proxy quart_api:8443 {

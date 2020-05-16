@@ -23,6 +23,18 @@ services:
             - backend
         environment:
             - DEFAULT_BACKEND_API
+        depends_on:
+            - fastapi_api
+            - quart_api
+
+    fastapi_api:
+        container_name: fastapi_api
+        build: ../backend/fastapi_api
+        image: fastapi_api
+        networks:
+            - backend
+        env_file:
+            - .env
 
     quart_api:
         container_name: quart_api

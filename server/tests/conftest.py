@@ -21,7 +21,7 @@ def wait_until_responsive(timeout: float = 3.0) -> None:
 
 
 @fixture(scope='session')
-def docker_compose():
+def docker_compose() -> None:
     filename = Path(__file__).parent.parent / 'docker-compose.yml'
     docker_compose_up = f'docker-compose -f {filename} up -d'
     check_call(docker_compose_up, shell=True)
