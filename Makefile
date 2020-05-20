@@ -1,2 +1,2 @@
 run:
-	(cd server && $(MAKE) live_server)
+	(cd server && $(MAKE) run)
