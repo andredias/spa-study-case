@@ -19,4 +19,4 @@ USER nobody
 
 EXPOSE 8443
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["hypercorn", "--config=hypercorn.toml", "main:app"]
+CMD ["hypercorn", "--config=hypercorn.toml", ".:create_app()"]

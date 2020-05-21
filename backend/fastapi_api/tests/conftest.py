@@ -1,4 +1,4 @@
-from app.main import app as _app
+from app import create_app
 from fastapi import FastAPI
 from httpx import AsyncClient
 from pytest import fixture
@@ -6,7 +6,7 @@ from pytest import fixture
 
 @fixture
 def app() -> FastAPI:
-    return _app
+    return create_app()
 
 
 @fixture
