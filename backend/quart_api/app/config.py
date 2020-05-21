@@ -1,7 +1,6 @@
 import os
 import secrets
 from pathlib import Path
-from tempfile import gettempdir
 
 APP_NAME: str = 'Quart API'
 
@@ -13,6 +12,6 @@ DEBUG: bool = ENV != 'production'
 
 LOG_LEVEL: str = os.getenv('LOG_LEVEL') or DEBUG and 'DEBUG' or 'INFO'
 LOG_BACKTRACE: bool = DEBUG
-LOG_FILENAME: Path = Path(gettempdir(), 'quart_api.log')
+LOG_FILENAME: Path = Path('/dev/shm') / (APP_NAME.lower().replace(' ', '_') + '.log')
 
 SECRET_KEY: str = os.getenv('SECRET_KEY') or secrets.token_urlsafe(32)
