@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 
+from . import config, logger  # noqa: F401
+from .routers import router
+
 app = FastAPI()
 
-
-@app.get('/hello')
-async def hello():
-    return {'hello': 'world'}
+app.include_router(router)
