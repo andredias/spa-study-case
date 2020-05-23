@@ -1,7 +1,7 @@
 from pytest import fixture
 from tornado.web import Application
 
-from app.main import create_app
+from app.main import create_app  # isort:skip
 
 
 @fixture

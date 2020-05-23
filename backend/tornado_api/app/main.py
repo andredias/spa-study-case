@@ -1,13 +1,12 @@
 import sys
 
-from tornado.ioloop import IOLoop
+from loguru import logger
 from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
 from tornado.web import Application
 
-from loguru import logger
-
-from .api import HelloHandler
 from . import config
+from .api import HelloHandler
 
 
 def create_app():
