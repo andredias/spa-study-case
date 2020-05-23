@@ -22,6 +22,16 @@ localhost {
         }
     }
 
+    route /tornado_api* {
+        uri strip_prefix /tornado_api
+        reverse_proxy tornado_api:8443 {
+            transport http {
+                tls
+                tls_insecure_skip_verify
+            }
+        }
+    }
+
     @compress_exts {
         not path *.gif *.jpg *.png
     }

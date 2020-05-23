@@ -26,6 +26,7 @@ services:
         depends_on:
             - fastapi_api
             - quart_api
+            - tornado_api
 
     fastapi_api:
         container_name: fastapi_api
@@ -40,6 +41,15 @@ services:
         container_name: quart_api
         build: ../backend/quart_api
         image: quart_api
+        networks:
+            - backend
+        env_file:
+            - .env
+
+    tornado_api:
+        container_name: tornado_api
+        build: ../backend/tornado_api
+        image: tornado_api
         networks:
             - backend
         env_file:
