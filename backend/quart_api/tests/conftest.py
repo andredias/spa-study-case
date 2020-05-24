@@ -1,9 +1,10 @@
 from pathlib import Path
 
-from app import create_app
 from pytest import fixture
 from quart import Quart
 from quart.testing import QuartClient
+
+from app import create_app  # isort:skip
 
 
 @fixture
