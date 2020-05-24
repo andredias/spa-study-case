@@ -3,7 +3,7 @@ run:
 
 
 test:
-	pytest
+	pytest -x -v --cov-report term-missing --cov app/
 
 
 docker_build:
