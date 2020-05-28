@@ -1,7 +1,5 @@
 run:
-	hypercorn --reload --config=hypercorn.toml "app:create_app()"
-	# curl --insecure -v https://127.0.0.1:8443/hello
-	# http --verify no https://localhost:8443/hello
+	hypercorn --reload --config=hypercorn.toml 'app:create_app()'
 
 
 test:
