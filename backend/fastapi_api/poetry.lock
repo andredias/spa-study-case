@@ -90,6 +90,30 @@ toml = ["toml"]
 
 [[package]]
 category = "main"
+description = "DNS toolkit"
+name = "dnspython"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.16.0"
+
+[package.extras]
+DNSSEC = ["pycryptodome", "ecdsa (>=0.13)"]
+IDNA = ["idna (>=2.1)"]
+
+[[package]]
+category = "main"
+description = "A robust email syntax and deliverability validation library for Python 2.x/3.x."
+name = "email-validator"
+optional = false
+python-versions = "*"
+version = "1.1.1"
+
+[package.dependencies]
+dnspython = ">=1.15.0"
+idna = ">=2.0.0"
+
+[[package]]
+category = "main"
 description = "Fake implementation of redis API for testing purposes."
 name = "fakeredis"
 optional = false
@@ -217,7 +241,7 @@ python-versions = "*"
 version = "5.2.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Internationalized Domain Names in Applications (IDNA)"
 name = "idna"
 optional = false
@@ -503,7 +527,7 @@ version = "0.15.0"
 h11 = ">=0.8.1"
 
 [metadata]
-content-hash = "240f665185bb086f9f00f9561e392990a06b4f3ec5cc70fea3cf2a54b301fb0c"
+content-hash = "26d852b8ab3b027a3dcf238e6ffb81ce9ac0f5bd352f671df8f958fce02ce14e"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -571,6 +595,14 @@ coverage = [
     {file = "coverage-5.1-cp39-cp39-win32.whl", hash = "sha256:a82b92b04a23d3c8a581fc049228bafde988abacba397d57ce95fe95e0338ab4"},
     {file = "coverage-5.1-cp39-cp39-win_amd64.whl", hash = "sha256:bb28a7245de68bf29f6fb199545d072d1036a1917dca17a1e75bbb919e14ee8e"},
     {file = "coverage-5.1.tar.gz", hash = "sha256:f90bfc4ad18450c80b024036eaf91e4a246ae287701aaa88eaebebf150868052"},
+]
+dnspython = [
+    {file = "dnspython-1.16.0-py2.py3-none-any.whl", hash = "sha256:f69c21288a962f4da86e56c4905b49d11aba7938d3d740e80d9e366ee4f1632d"},
+    {file = "dnspython-1.16.0.zip", hash = "sha256:36c5e8e38d4369a08b6780b7f27d790a292b2b08eea01607865bf0936c558e01"},
+]
+email-validator = [
+    {file = "email_validator-1.1.1-py2.py3-none-any.whl", hash = "sha256:5f246ae8d81ce3000eade06595b7bb55a4cf350d559e890182a1466a21f25067"},
+    {file = "email_validator-1.1.1.tar.gz", hash = "sha256:63094045c3e802c3d3d575b18b004a531c36243ca8d1cec785ff6bfcb04185bb"},
 ]
 fakeredis = [
     {file = "fakeredis-1.4.1-py3-none-any.whl", hash = "sha256:647b2593d349d9d4e566c8dadb2e4c71ba35be5bdc4f1f7ac2d565a12a965053"},
