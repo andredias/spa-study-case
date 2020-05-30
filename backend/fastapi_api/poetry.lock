@@ -1,5 +1,16 @@
 [[package]]
 category = "dev"
+description = "Programmatic startup/shutdown of ASGI apps."
+name = "asgi-lifespan"
+optional = false
+python-versions = ">=3.6"
+version = "1.0.0"
+
+[package.dependencies]
+sniffio = "*"
+
+[[package]]
+category = "dev"
 description = "Atomic file writes."
 marker = "sys_platform == \"win32\""
 name = "atomicwrites"
@@ -428,10 +439,14 @@ version = "0.15.0"
 h11 = ">=0.8.1"
 
 [metadata]
-content-hash = "819a333850d6bbc6f665c405d65fb0337e5653b558067debbd4590e45e153533"
+content-hash = "94c06420a52d13bd98f7443531de581e03f4ecbca3a3f12f8a2165c3cdc12f50"
 python-versions = "^3.8"
 
 [metadata.files]
+asgi-lifespan = [
+    {file = "asgi-lifespan-1.0.0.tar.gz", hash = "sha256:fb73fe407cfaf258b9f067caea32462f9783985ce671953bad8b99355ce8a3d4"},
+    {file = "asgi_lifespan-1.0.0-py3-none-any.whl", hash = "sha256:1e1e4dfb2aa259f38cf3c55e58f9d3e25da9dd6e33190a3740fcca0e126b74e9"},
+]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
     {file = "atomicwrites-1.4.0.tar.gz", hash = "sha256:ae70396ad1a434f9c7046fd2dd196fc04b12f9e91ffb859164193be8b6168a7a"},

@@ -1,5 +1,7 @@
 from pathlib import Path
+from typing import AsyncIterable
 
+from asgi_lifespan import LifespanManager
 from fastapi import FastAPI
 from httpx import AsyncClient
 from pytest import fixture
@@ -7,13 +9,14 @@ from pytest import fixture
 from app import create_app  # isort:skip
 
 
-@fixture(scope='session')
-def app() -> FastAPI:
+@fixture
+async def app() -> AsyncIterable[FastAPI]:
     app = create_app(Path(__file__).parent / 'env.test')
-    return app
+    async with LifespanManager(app):
+        yield app
 
 
 @fixture
-async def client(app: FastAPI) -> AsyncClient:
+async def client(app: FastAPI) -> AsyncIterable[AsyncClient]:
     async with AsyncClient(app=app, base_url='http://testserver') as client:
         yield client
