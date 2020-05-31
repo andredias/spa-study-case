@@ -6,14 +6,27 @@ from fastapi import FastAPI
 from loguru import logger
 
 from . import config
-from .routers import router
+from .resources import close_resources, start_resources
+from .routers import hello
 
 
 def create_app(env_filename: Union[str, Path] = '.env') -> FastAPI:
     config.init(env_filename)
     setup_logger()
+
     app = FastAPI()
-    app.include_router(router)
+    app.include_router(hello.router)
+
+    @app.on_event('startup')
+    async def startup_event():
+        logger.debug('startup...')
+        await start_resources()
+
+    @app.on_event('shutdown')
+    async def shutdown_event():
+        logger.debug('...shutdown')
+        await close_resources()
+
     return app
 
 
