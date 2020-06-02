@@ -35,8 +35,6 @@ def setup_logger():
     '''
     Configure Loguru's logger
     '''
-    from . import config
-
     logger.remove()  # remove standard handler
     logger.add(
         sys.stderr, level=config.LOG_LEVEL, colorize=True, backtrace=config.DEBUG, enqueue=True
