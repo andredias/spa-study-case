@@ -1,29 +1,17 @@
-from typing import Dict, Optional
+from typing import Dict
 
 from fastapi import APIRouter, Cookie, HTTPException, Response
 from pydantic import BaseModel, EmailStr
 
-from ..models import User
+from ..models import UserInfo, get_user
 from ..sessions import create_session, delete_session
 
 router = APIRouter()
 
 
-class UserInfo(BaseModel):
-    name: str
-    email: EmailStr
-    admin: bool = False
-
-
 class LoginInfo(BaseModel):
     email: EmailStr
     password: str
-
-
-async def get_user(email: str, password: str) -> Optional[User]:
-    # get user by email
-    # compare password
-    return None
 
 
 @router.post('/login', response_model=UserInfo)
