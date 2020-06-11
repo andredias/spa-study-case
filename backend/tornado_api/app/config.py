@@ -1,12 +1,34 @@
 import os
 import secrets
+from pathlib import Path
+from typing import Union
 
-ENV: str = os.environ['ENV'].lower()
-if ENV not in ('development', 'testing', 'production'):
-    raise ValueError(f'ENV="{ENV}" but it should be "development", "testing" or "production"')
-TESTING: bool = ENV == 'testing'
-DEBUG: bool = ENV != 'production'
+from dotenv import load_dotenv
 
-LOG_LEVEL: str = os.getenv('LOG_LEVEL') or DEBUG and 'DEBUG' or 'INFO'
+DEBUG: bool
+ENV: str
+LOG_LEVEL: str
+SECRET_KEY: bytes
+TESTING: bool
 
-SECRET_KEY: str = os.getenv('SECRET_KEY') or secrets.token_urlsafe(32)
+
+def init(env_filename: Union[str, Path] = '.env') -> None:
+    global DEBUG
+    global ENV
+    global LOG_LEVEL
+    global SECRET_KEY
+    global TESTING
+
+    # a .env file is not mandatory.
+    # You can specify envvar parameters by other means
+    load_dotenv(env_filename)
+
+    ENV = os.environ['ENV'].lower()
+    if ENV not in ('development', 'testing', 'production'):
+        raise ValueError(f'ENV="{ENV}" but it should be "development", "testing" or "production"')
+    TESTING = ENV == 'testing'
+    DEBUG = ENV != 'production'
+
+    LOG_LEVEL = os.getenv('LOG_LEVEL') or DEBUG and 'DEBUG' or 'INFO'
+
+    SECRET_KEY = bytes(os.getenv('SECRET_KEY', ''), 'utf-8') or secrets.token_bytes(32)
