@@ -46,7 +46,20 @@ def create_app(env_filename: Union[str, Path] = '.env') -> Quart:
     logger.debug(app.config)
 
     # blueprints
-    from .api import api
-    app.register_blueprint(api)
+    from .routes import hello
+    app.register_blueprint(hello.api)
+
+    from .resources import close_resources, start_resources
+
+    # startup e shutdown
+    @app.before_serving
+    async def startup_event():
+        logger.debug('startup...')
+        await start_resources()
+
+    @app.after_serving
+    async def shutdown_event():
+        logger.debug('...shutdown')
+        await close_resources()
 
     return app
