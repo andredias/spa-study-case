@@ -22,8 +22,8 @@ async def login(rec: LoginInfo, response: Response, session_id: str = Cookie(Non
     if session_id:
         await delete_session(session_id)
     session_id, csrf_token = await create_session({'user_id': user.id})
-    response.set_cookie(key='session_id', value=session_id, httponly=True)
-    response.set_cookie(key='csrf', value=csrf_token, max_age=1)
+    response.set_cookie(key='session_id', value=session_id, httponly=True, secure=True)
+    response.set_cookie(key='csrf', value=csrf_token, secure=True)
     return vars(user)
 
 

@@ -23,8 +23,10 @@ get_user_mock = AsyncMock(return_value=user)
 async def test_successful_login(client: AsyncClient) -> None:
     resp = await client.post('/login', json={'email': user.email, 'password': user.password})
     assert resp.status_code == 200
-    assert resp.cookies['session_id']
-    assert resp.cookies['csrf']
+    csrf, session_id = [set(cookie.split('; ')) for cookie in sorted(resp.headers.getlist('set-cookie'))]
+    assert {'HttpOnly', 'Secure', 'SameSite=lax'} <= session_id
+    assert {'Secure', 'SameSite=lax'} <= csrf
+    assert 'HttpOnly' not in csrf
 
 
 @patch('app.routers.login.get_user', get_user_mock)
@@ -60,4 +62,5 @@ async def test_logout(delete_session: AsyncMock, cookies: Dict[str, str], called
     assert resp.status_code == 204
     assert 'session_id=""' in cookies_headers
     assert 'csrf=""' in cookies_headers
+    assert 'Max-Age=0' in cookies_headers
     assert delete_session.called is called
