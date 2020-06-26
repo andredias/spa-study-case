@@ -9,6 +9,11 @@ python = "^3.8"
 tornado = "*"
 python-dotenv = "*"
 loguru = "*"
+pydantic = "*"
+email_validator = "*"
+ujson = "*"
+aioredis = "*"
+fakeredis = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"
