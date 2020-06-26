@@ -6,21 +6,21 @@ authors = ["André Felipe Dias <andre.dias@pronus.io>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-quart = "^0.11.5"
-loguru = "^0.4.1"
-python-dotenv = "^0.13.0"
-hypercorn = "^0.9.5"
-uvloop = "^0.14.0"
-aioredis = "^1.3.1"
-fakeredis = "^1.4.1"
-ujson = "^3.0.0"
+quart = "*"
+loguru = "*"
+python-dotenv = "*"
+hypercorn = "*"
+uvloop = "*"
+aioredis = "*"
+fakeredis = "*"
+ujson = "*"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.4.1"
-pytest-asyncio = "^0.10.0"
-pytest-cov = "^2.8.1"
-httpx = "^0.13.3"
-asgi-lifespan = "^1.0.0"
+pytest = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
+httpx = "*"
+asgi-lifespan = "*"
 
 [build-system]
 requires = ["poetry>=0.12"]
