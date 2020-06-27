@@ -2,7 +2,7 @@ import hmac
 from base64 import b64encode
 from hashlib import sha256
 from secrets import token_urlsafe
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional
 
 import ujson as json
 
@@ -10,27 +10,23 @@ from . import config
 from . import resources as res
 
 
-async def create_session(data: Dict[str, Any]) -> Tuple[str, str]:
+async def create_session(data: Dict[str, Any]) -> str:
     '''
-    Creates a random session_id and stores its correspondent csrf
-    and related data into Redis
+    Creates a random session_id and stores the related data into Redis.
     '''
     session_id: str = token_urlsafe(config.SESSION_ID_LENGTH)
-    csrf_token: str = create_csrf(session_id)
-    await res.redis.hmset(session_id, 'data', json.dumps(data), 'csrf', csrf_token)
+    await res.redis.set(session_id, json.dumps(data))
     await res.redis.expire(session_id, config.SESSION_LIFETIME)
-    return session_id, csrf_token
+    return session_id
 
 
-async def get_session(session_id: str) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    payload: str
-    csrf: str
-    payload, csrf = await res.redis.hmget(session_id, 'data', 'csrf')
+async def get_session(session_id: str) -> Optional[Dict[str, Any]]:
+    payload = await res.redis.get(session_id)
     data = None
-    if payload is not None and csrf is not None:
+    if payload is not None:
         data = json.loads(payload)
         await res.redis.expire(session_id, config.SESSION_LIFETIME)  # renew expiration date
-    return data, csrf
+    return data
 
 
 async def delete_session(session_id: str) -> None:
@@ -48,8 +44,7 @@ def create_csrf(session_id: str) -> str:
     '''
     message = bytes(session_id, 'utf-8')
     token = b64encode(hmac.new(config.SECRET_KEY, message, sha256).digest())  # type: ignore
-    length = min(len(session_id), len(token))
-    return token[:length].decode('utf-8')
+    return token.decode('utf-8')
 
 
 def is_valid_csrf(session_id: str, csrf: str) -> bool:

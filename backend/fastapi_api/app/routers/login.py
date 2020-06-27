@@ -4,7 +4,7 @@ from fastapi import APIRouter, Cookie, HTTPException, Response
 from pydantic import BaseModel, EmailStr
 
 from ..models import UserInfo, get_user
-from ..sessions import create_session, delete_session
+from ..sessions import create_csrf, create_session, delete_session
 
 router = APIRouter()
 
@@ -21,7 +21,8 @@ async def login(rec: LoginInfo, response: Response, session_id: str = Cookie(Non
         raise HTTPException(status_code=404, detail='invalid email or password')
     if session_id:
         await delete_session(session_id)
-    session_id, csrf_token = await create_session({'user_id': user.id})
+    session_id = await create_session({'user_id': user.id})
+    csrf_token = create_csrf(session_id)
     response.set_cookie(key='session_id', value=session_id, httponly=True, secure=True)
     response.set_cookie(key='csrf', value=csrf_token, secure=True)
     return vars(user)
