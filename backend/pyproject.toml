@@ -6,14 +6,14 @@ authors = ["André Felipe Dias <andre.dias@pronus.io>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-mypy = "^0.770"
-flake8 = "^3.7.9"
-yapf = "^0.29.0"
-flake8-debugger = "^3.2.1"
-flake8-fixme = "^1.1.1"
-pep8-naming = "^0.10.0"
-flake8-print = "^3.1.4"
-isort = "^4.3.21"
+mypy = "*"
+flake8 = "*"
+yapf = "*"
+flake8-debugger = "*"
+flake8-fixme = "*"
+pep8-naming = "*"
+flake8-print = "*"
+isort = "*"
 
 [tool.poetry.dev-dependencies]
 
