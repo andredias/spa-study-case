@@ -5,6 +5,7 @@ from secrets import token_urlsafe
 from typing import Any, Dict, Optional
 
 import ujson as json
+from fastapi import Cookie, Header, HTTPException
 
 from . import config
 from . import resources as res
@@ -49,3 +50,17 @@ def create_csrf(session_id: str) -> str:
 
 def is_valid_csrf(session_id: str, csrf: str) -> bool:
     return create_csrf(session_id) == csrf
+
+
+async def authenticated_session(session_id: str = Cookie(None), x_csrf_token: str = Header(None)) -> Dict[str, Any]:
+    '''
+    FastAPI Dependency to get authenticated session data.
+    If no valid session is found, it raises an HTTP Error 401
+    '''
+    if (
+        session_id and x_csrf_token and is_valid_csrf(session_id, x_csrf_token) and
+        (data := await get_session(session_id))
+    ):
+        return data
+    else:
+        raise HTTPException(status_code=401)
