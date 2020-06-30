@@ -1,0 +1,40 @@
+name: Continuous Integration
+on: push
+defaults:
+    run: ubuntu-latest
+jobs:
+    setup:
+        name: Set up environment
+        steps:
+            - uses: actions/checkout@latest
+            - name: Set up Python 3.8
+              uses: actions/setup-python@latest
+              with:
+                  python-version: 3.8
+            - name: Install Poetry
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install poetry
+    lint:
+        needs: setup
+        name: lint projects
+        steps:
+            - run: |
+                  cd backend
+                  poetry run make check
+
+    test-server:
+        needs: setup
+        name: Test Server
+        steps:
+            - run: |
+                  cd server
+                  poetry run make test
+
+    fastapi:
+        needs: setup
+        name: Test FastAPI API
+        steps:
+            - run: |
+                  cd backend/fastapi_api
+                  poetry run make test
