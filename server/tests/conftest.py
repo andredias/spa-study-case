@@ -6,12 +6,12 @@ from httpx import AsyncClient, get, NetworkError
 from pytest import fixture
 
 
-def wait_until_responsive(timeout: float = 3.0) -> None:
+def wait_until_responsive(url: str, timeout: float = 3.0) -> None:
     ref = time()
     now = ref
     while (now - ref) < timeout:
         try:
-            response = get('https://localhost', verify=False)
+            response = get(url, verify=False)
             if response.status_code == 200:
                 return
         except NetworkError:
@@ -27,7 +27,10 @@ def docker_compose() -> None:
     docker_compose_up = f'docker-compose -f {filename} up -d'
     check_call(docker_compose_up, shell=True)
     try:
-        wait_until_responsive()
+        wait_until_responsive('https://localhost')
+        wait_until_responsive('https://localhost/fastapi_api/hello')
+        wait_until_responsive('https://localhost/quart_api/hello')
+        wait_until_responsive('https://localhost/tornado_api/hello')
         yield
     finally:
         check_call(['docker-compose', 'down'])
