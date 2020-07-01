@@ -1,9 +1,10 @@
 name: Continuous Integration
 on: push
 jobs:
-    lint-and-test:
+    lint-and-test-apps:
         runs-on: ubuntu-latest
-        name: Continuous Integration
+        name: Lint and Test Applications
+        if: false # temporarely disabled to test only the server
         steps:
             - uses: actions/checkout@v2
             - name: Set up Python 3.8
@@ -34,9 +35,19 @@ jobs:
                   poetry install
                   poetry run make test
               working-directory: backend/tornado_api
+    test-server:
+        runs-on: ubuntu-latest
+        name: Server Smoke Test
+        steps:
             - name: Test Server
               run: |
                   echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
                   poetry install
-                  poetry run make test
+                  poetry shell
+                  docker-compose -f docker-compose.yml up --build -d
+                  docker-compose logs
+                  curl --insecure https://localhost/api/hello -v
+                  curl --insecure https://localhost/quart_api/hello
+                  curl --insecure https://localhost/tornado_api/hello
+                  docker-compose down
               working-directory: server
