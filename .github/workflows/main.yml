@@ -4,7 +4,6 @@ jobs:
     lint-and-test-apps:
         runs-on: ubuntu-latest
         name: Lint and Test Applications
-        if: false # temporarely disabled to test only the server
         steps:
             - uses: actions/checkout@v2
             - name: Set up Python 3.8
@@ -44,13 +43,13 @@ jobs:
               uses: actions/setup-python@v2
               with:
                   python-version: 3.8
+            - name: Install Poetry
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install poetry
             - name: Test Server
+              working-directory: server
               run: |
                   echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
-                  docker-compose -f docker-compose.yml up --build -d
-                  docker-compose logs
-                  curl --insecure https://localhost/api/hello -v
-                  curl --insecure https://localhost/quart_api/hello
-                  curl --insecure https://localhost/tornado_api/hello
-                  docker-compose down
-              working-directory: server
+                  poetry install
+                  poetry run make test
