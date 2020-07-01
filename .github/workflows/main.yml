@@ -35,11 +35,8 @@ jobs:
                   poetry run make test
               working-directory: backend/tornado_api
             - name: Test Server
-              env:
-                  ENV: production
-                  DEFAULT_BACKEND_API: fastapi_api
               run: |
-                  echo
+                  echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
                   poetry install
                   poetry run make test
               working-directory: server
