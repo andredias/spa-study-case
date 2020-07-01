@@ -36,3 +36,6 @@ __pycache__
 
 # Caddy local data
 caddy/data/**/local
+
+# Redis
+server/redis

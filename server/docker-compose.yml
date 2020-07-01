@@ -27,6 +27,15 @@ services:
             - fastapi_api
             - quart_api
             - tornado_api
+            - redis
+
+    redis:
+        container_name: redis
+        image: "redis:latest"
+        volumes:
+            - ./redis:/data
+        networks:
+            - backend
 
     fastapi_api:
         container_name: fastapi_api
