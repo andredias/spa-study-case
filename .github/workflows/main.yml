@@ -15,17 +15,27 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install poetry
             - name: Lint projects
-              run: poetry run make check
               working-directory: backend
+              run: |
+                  poetry install
+                  poetry run make check
             - name: Test FastAPI app
-              run: poetry run make test
               working-directory: backend/fastapi_api
+              run: |
+                  poetry install
+                  poetry run make test
             - name: Test Quart app
-              run: poetry run make test
               working-directory: backend/quart_api
+              run: |
+                  poetry install
+                  poetry run make test
             - name: Test Tornado app
-              run: poetry run make test
+              run: |
+                  poetry install
+                  poetry run make test
               working-directory: backend/tornado_api
             - name: Test Server
-              run: poetry run make test
+              run: |
+                  poetry install
+                  poetry run make test
               working-directory: server
