@@ -16,16 +16,16 @@ jobs:
                   pip install poetry
             - name: Lint projects
               run: poetry run make check
-                working-directory: backend
+              working-directory: backend
             - name: Test FastAPI app
               run: poetry run make test
-                working-directory: backend/fastapi_api
+              working-directory: backend/fastapi_api
             - name: Test Quart app
               run: poetry run make test
-                working-directory: backend/quart_api
+              working-directory: backend/quart_api
             - name: Test Tornado app
               run: poetry run make test
-                working-directory: backend/tornado_api
+              working-directory: backend/tornado_api
             - name: Test Server
               run: poetry run make test
-                working-directory: server
+              working-directory: server
