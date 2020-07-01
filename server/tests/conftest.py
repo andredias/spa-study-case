@@ -24,11 +24,11 @@ def wait_until_responsive(url: str, timeout: float = 3.0) -> None:
 @fixture(scope='session')
 def docker_compose() -> None:
     filename = Path(__file__).parent.parent / 'docker-compose.yml'
-    docker_compose_up = f'docker-compose -f {filename} up -d'
+    docker_compose_up = f'docker-compose -f {filename} up --build -d'
     check_call(docker_compose_up, shell=True)
     try:
         wait_until_responsive('https://localhost')
-        wait_until_responsive('https://localhost/fastapi_api/hello', 12.0)
+        wait_until_responsive('https://localhost/fastapi_api/hello')
         wait_until_responsive('https://localhost/quart_api/hello')
         wait_until_responsive('https://localhost/tornado_api/hello')
         yield

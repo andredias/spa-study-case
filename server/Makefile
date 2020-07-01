@@ -8,5 +8,4 @@ run:
 	docker-compose up --build
 
 test:
-	docker-compose build
-	$(cmd) pytest -v
+	$(cmd) pytest -sv
