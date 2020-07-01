@@ -26,6 +26,7 @@ def docker_compose() -> None:
     filename = Path(__file__).parent.parent / 'docker-compose.yml'
     docker_compose_up = f'docker-compose -f {filename} up --build -d'
     check_call(docker_compose_up, shell=True)
+    check_call(['docker-compose', 'logs'])
     try:
         wait_until_responsive('https://localhost')
         wait_until_responsive('https://localhost/fastapi_api/hello')
@@ -33,6 +34,7 @@ def docker_compose() -> None:
         wait_until_responsive('https://localhost/tornado_api/hello')
         yield
     finally:
+        check_call(['docker-compose', 'logs'])
         check_call(['docker-compose', 'down'])
 
 
