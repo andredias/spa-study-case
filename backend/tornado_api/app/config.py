@@ -44,6 +44,5 @@ def init(env_filename: Union[str, Path] = '.env') -> None:
     SESSION_ID_LENGTH = int(os.getenv('SESSION_ID_LENGTH', 16))
     SESSION_LIFETIME = int(timedelta(days=7).total_seconds())
 
-    if ENV == 'production':
-        REDIS_HOST = os.environ['REDIS_HOST']
-        REDIS_PORT = os.environ['REDIS_PORT']
+    REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
+    REDIS_PORT = os.getenv('REDIS_PORT', '6379')
