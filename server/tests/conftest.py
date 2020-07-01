@@ -28,7 +28,7 @@ def docker_compose() -> None:
     check_call(docker_compose_up, shell=True)
     try:
         wait_until_responsive('https://localhost')
-        wait_until_responsive('https://localhost/fastapi_api/hello')
+        wait_until_responsive('https://localhost/fastapi_api/hello', 12.0)
         wait_until_responsive('https://localhost/quart_api/hello')
         wait_until_responsive('https://localhost/tornado_api/hello')
         yield
