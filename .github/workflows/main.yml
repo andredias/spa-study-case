@@ -10,7 +10,7 @@ jobs:
             matrix:
                 api: [fastapi, quart, tornado]
         runs-on: ubuntu-latest
-        name: FastAPI Project
+        name: ${{ matrix.api }} Project
         env:
             APP_NAME: ${{ matrix.api }}_api
         steps:
@@ -113,6 +113,7 @@ jobs:
                           docker push localhost:5000/$APP_NAME || true
                       fi
                       docker tag localhost:5000/$APP_NAME $APP_NAME
+                  done
             - name: Test Server
               working-directory: server
               run: |
