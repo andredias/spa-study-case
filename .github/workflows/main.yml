@@ -105,13 +105,11 @@ jobs:
               run: |
                   for app in fastapi quart tornado; do
                       APP_NAME=${app}_api
-                      pulled=$(docker pull localhost:5000/$APP_NAME)
-                      if [ ! $pulled ]; then
-                          cd $APP_NAME
-                          docker build -t localhost:5000/$APP_NAME .
-                          cd -
-                          docker push localhost:5000/$APP_NAME || true
-                      fi
+                      docker pull localhost:5000/$APP_NAME || true
+                      cd $APP_NAME
+                      docker build -t localhost:5000/$APP_NAME .
+                      cd -
+                      docker push localhost:5000/$APP_NAME || true
                       docker tag localhost:5000/$APP_NAME $APP_NAME
                   done
             - name: Test Server
