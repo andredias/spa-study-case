@@ -1,39 +1,87 @@
 name: Continuous Integration
 on: push
 jobs:
-    lint-and-test-apps:
+    fastapi:
         runs-on: ubuntu-latest
-        name: Lint and Test Applications
+        name: FastAPI Project
         steps:
             - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 2
             - name: Set up Python 3.8
               uses: actions/setup-python@v2
               with:
                   python-version: 3.8
-            - name: Install Poetry
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend/fastapi_api }}
+            - name: Testing
               run: |
                   python -m pip install --upgrade pip
                   pip install poetry
-            - name: Lint projects
-              working-directory: backend
-              run: |
                   poetry install
-                  poetry run make check
-            - name: Test FastAPI app
+                  poetry run make test
               working-directory: backend/fastapi_api
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend/fastapi_api }}
+    quart:
+        runs-on: ubuntu-latest
+        name: Quart Project
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 2
+            - name: Set up Python 3.8
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend/quart_api }}
+            - name: Testing
               run: |
+                  python -m pip install --upgrade pip
+                  pip install poetry
                   poetry install
                   poetry run make test
-            - name: Test Quart app
               working-directory: backend/quart_api
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend/quart_api }}
+    tornado:
+        runs-on: ubuntu-latest
+        name: Tornado Project
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 2
+            - name: Set up Python 3.8
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend/tornado_api }}
+            - name: Testing
               run: |
-                  poetry install
-                  poetry run make test
-            - name: Test Tornado app
-              run: |
+                  python -m pip install --upgrade pip
+                  pip install poetry
                   poetry install
                   poetry run make test
               working-directory: backend/tornado_api
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend/tornado_api }}
+    backend:
+        runs-on: ubuntu-latest
+        name: Lint Backend Projects
+        steps:
+            - uses: actions/checkout@v2
+              with:
+                  fetch-depth: 2
+            - name: Set up Python 3.8
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.8
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend }}
+            - name: Linting
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install poetry
+                  poetry install
+                  poetry run make check
+              working-directory: backend
+              if: ${{ git diff HEAD^ HEAD --name-only | grep backend }}
+
     test-server:
         runs-on: ubuntu-latest
         name: Server Smoke Test
