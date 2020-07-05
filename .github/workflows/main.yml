@@ -119,4 +119,4 @@ jobs:
                   pip install poetry
                   echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
                   poetry install
-                  poetry run make test
+                  poetry run make test-ci
