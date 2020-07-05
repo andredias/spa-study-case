@@ -154,7 +154,6 @@ jobs:
                       ~/.cache/pip
                       ~/.cache/pypoetry/cache
                   key: pip-poetry-cache
-              if: env.GIT_DIFF
             - name: Test Server
               run: |
                   python -m pip install --upgrade pip
