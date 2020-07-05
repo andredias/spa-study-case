@@ -1,16 +1,25 @@
+# Article about caching docker builds in GitHub Actions
+# ref: https://dev.to/dtinth/caching-docker-builds-in-github-actions-which-approach-is-the-fastest-a-research-18ei
+# ref: https://github.com/dtinth/github-actions-docker-layer-caching-poc/blob/master/.github/workflows/dockerimage.yml
+
 name: Continuous Integration
 on: push
 jobs:
-    fastapi:
+    apis:
+        strategy:
+            matrix:
+                api: [fastapi, quart, tornado]
         runs-on: ubuntu-latest
         name: FastAPI Project
+        env:
+            APP_NAME: ${{ matrix.api }}_api
         steps:
             - uses: actions/checkout@v2
               with:
                   fetch-depth: 2
             - uses: technote-space/get-diff-action@v2
               with:
-                  PREFIX_FILTER: backend/fastapi_api
+                  PREFIX_FILTER: backend/$APP_NAME
                   FROM: HEAD^
                   TO: HEAD
             - id: cache
@@ -32,75 +41,7 @@ jobs:
                   pip install poetry
                   poetry install
                   poetry run make test
-              working-directory: backend/fastapi_api
-              if: env.GIT_DIFF
-
-    quart:
-        runs-on: ubuntu-latest
-        name: Quart Project
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                  fetch-depth: 2
-            - uses: technote-space/get-diff-action@v2
-              with:
-                  PREFIX_FILTER: backend/quart_api
-                  FROM: HEAD^
-                  TO: HEAD
-            - id: cache
-              uses: actions/cache@v2
-              with:
-                  path: |
-                      ~/.cache/pip
-                      ~/.cache/pypoetry/cache
-                  key: pip-poetry-cache
-              if: env.GIT_DIFF
-            - name: Set up Python 3.8
-              uses: actions/setup-python@v2
-              with:
-                  python-version: 3.8
-              if: env.GIT_DIFF
-            - name: Testing
-              run: |
-                  python -m pip install --upgrade pip
-                  pip install poetry
-                  poetry install
-                  poetry run make test
-              working-directory: backend/quart_api
-              if: env.GIT_DIFF
-
-    tornado:
-        runs-on: ubuntu-latest
-        name: Tornado Project
-        steps:
-            - uses: actions/checkout@v2
-              with:
-                  fetch-depth: 2
-            - uses: technote-space/get-diff-action@v2
-              with:
-                  PREFIX_FILTER: backend/tornado_api
-                  FROM: HEAD^
-                  TO: HEAD
-            - id: cache
-              uses: actions/cache@v2
-              with:
-                  path: |
-                      ~/.cache/pip
-                      ~/.cache/pypoetry/cache
-                  key: pip-poetry-cache
-              if: env.GIT_DIFF
-            - name: Set up Python 3.8
-              uses: actions/setup-python@v2
-              with:
-                  python-version: 3.8
-              if: env.GIT_DIFF
-            - name: Testing
-              run: |
-                  python -m pip install --upgrade pip
-                  pip install poetry
-                  poetry install
-                  poetry run make test
-              working-directory: backend/tornado_api
+              working-directory: backend/$APP_NAME
               if: env.GIT_DIFF
 
     backend:
@@ -140,7 +81,7 @@ jobs:
     test-server:
         runs-on: ubuntu-latest
         name: Server Smoke Test
-        needs: [fastapi, quart, tornado, backend]
+        needs: apis
         steps:
             - uses: actions/checkout@v2
             - name: Set up Python 3.8
@@ -153,7 +94,25 @@ jobs:
                   path: |
                       ~/.cache/pip
                       ~/.cache/pypoetry/cache
+                      /tmp/docker-registry
                   key: pip-poetry-cache
+            - name: Start local registry
+              run: |
+                  docker run -d -p 5000:5000 --restart=always --name registry \
+                             -v /tmp/docker-registry:/var/lib/registry registry:2 && npx wait-on tcp:5000
+            - name: Pull or Build images
+              working-directory: backend
+              run: |
+                  for app in fastapi quart tornado; do
+                      APP_NAME=${app}_api
+                      pulled=$(docker pull localhost:5000/$APP_NAME)
+                      if [ ! $pulled ]; then
+                          cd $APP_NAME
+                          docker build -t localhost:5000/$APP_NAME .
+                          cd -
+                          docker push localhost:5000/$APP_NAME || true
+                      fi
+                      docker tag localhost:5000/$APP_NAME $APP_NAME
             - name: Test Server
               working-directory: server
               run: |
