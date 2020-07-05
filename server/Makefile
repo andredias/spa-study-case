@@ -7,5 +7,10 @@ endif
 run:
 	docker-compose up --build
 
-test:
+build:
+	docker-compose build
+
+test-ci:
 	$(cmd) pytest -sv
+
+test: build test-ci
