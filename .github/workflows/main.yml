@@ -88,14 +88,18 @@ jobs:
               uses: actions/setup-python@v2
               with:
                   python-version: 3.8
-            - id: cache
-              uses: actions/cache@v2
+            - uses: actions/cache@v2
               with:
                   path: |
                       ~/.cache/pip
                       ~/.cache/pypoetry/cache
                       /tmp/docker-registry
                   key: pip-poetry-cache
+            - uses: actions/cache@v2
+              with:
+                  path: |
+                      /tmp/docker-registry
+                  key: docker-cache
             - name: Start local registry
               run: |
                   docker run -d -p 5000:5000 --restart=always --name registry \
