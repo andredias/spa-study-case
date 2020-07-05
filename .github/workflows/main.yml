@@ -44,7 +44,7 @@ jobs:
               working-directory: backend/$APP_NAME
               if: env.GIT_DIFF
 
-    backend:
+    lint:
         runs-on: ubuntu-latest
         name: Lint Backend Projects
         steps:
@@ -81,7 +81,7 @@ jobs:
     test-server:
         runs-on: ubuntu-latest
         name: Server Smoke Test
-        needs: apis
+        needs: [apis, lint]
         steps:
             - uses: actions/checkout@v2
             - name: Set up Python 3.8
