@@ -33,7 +33,7 @@ jobs:
                   pip install poetry
                   poetry install
                   poetry run make test
-              working-directory: backend/$APP_NAME
+              working-directory: backend/${{ matrix.api }}_api
 
     lint:
         runs-on: ubuntu-latest
