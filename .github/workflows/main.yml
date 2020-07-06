@@ -19,11 +19,10 @@ jobs:
                   fetch-depth: 2
             - uses: technote-space/get-diff-action@v2
               with:
-                  PREFIX_FILTER: backend/$APP_NAME
+                  PREFIX_FILTER: backend/${{ matrix.api }}
                   FROM: HEAD^
                   TO: HEAD
-            - id: cache
-              uses: actions/cache@v2
+            - uses: actions/cache@v2
               with:
                   path: |
                       ~/.cache/pip
@@ -111,7 +110,7 @@ jobs:
                       APP_NAME=${app}_api
                       docker pull localhost:5000/$APP_NAME || true
                       cd $APP_NAME
-                      docker build -t localhost:5000/$APP_NAME .
+                      docker build -t localhost:5000/$APP_NAME --cache-from=localhost:5000/$APP_NAME:latest .
                       cd -
                       docker push localhost:5000/$APP_NAME || true
                       docker tag localhost:5000/$APP_NAME $APP_NAME
