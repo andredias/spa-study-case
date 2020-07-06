@@ -10,7 +10,5 @@ run:
 build:
 	docker-compose build
 
-test-ci:
+test: build
 	$(cmd) pytest -sv
-
-test: build test-ci
