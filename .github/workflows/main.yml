@@ -40,8 +40,6 @@ jobs:
         name: Lint Backend Projects
         steps:
             - uses: actions/checkout@v2
-              with:
-                  fetch-depth: 2
             - uses: actions/cache@v2
               with:
                   path: |
