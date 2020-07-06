@@ -15,25 +15,18 @@ jobs:
             APP_NAME: ${{ matrix.api }}_api
         steps:
             - uses: actions/checkout@v2
-              with:
-                  fetch-depth: 2
-            - uses: technote-space/get-diff-action@v2
-              with:
-                  PREFIX_FILTER: backend/${{ matrix.api }}
-                  FROM: HEAD^
-                  TO: HEAD
             - uses: actions/cache@v2
               with:
                   path: |
                       ~/.cache/pip
                       ~/.cache/pypoetry/cache
-                  key: pip-poetry-cache
-              if: env.GIT_DIFF
+                  key: pip-poetry-cache-${{ hashFiles('**/poetry.lock') }}
+                  restore-keys: |
+                      pip-poetry-cache-
             - name: Set up Python 3.8
               uses: actions/setup-python@v2
               with:
                   python-version: 3.8
-              if: env.GIT_DIFF
             - name: Testing
               run: |
                   python -m pip install --upgrade pip
@@ -41,7 +34,6 @@ jobs:
                   poetry install
                   poetry run make test
               working-directory: backend/$APP_NAME
-              if: env.GIT_DIFF
 
     lint:
         runs-on: ubuntu-latest
@@ -50,24 +42,18 @@ jobs:
             - uses: actions/checkout@v2
               with:
                   fetch-depth: 2
-            - uses: technote-space/get-diff-action@v2
-              with:
-                  PREFIX_FILTER: backend
-                  FROM: HEAD^
-                  TO: HEAD
-            - id: cache
-              uses: actions/cache@v2
+            - uses: actions/cache@v2
               with:
                   path: |
                       ~/.cache/pip
                       ~/.cache/pypoetry/cache
-                  key: pip-poetry-cache
-              if: env.GIT_DIFF
+                  key: pip-poetry-cache-${{ hashFiles('**/poetry.lock') }}
+                  restore-keys: |
+                      pip-poetry-cache-
             - name: Set up Python 3.8
               uses: actions/setup-python@v2
               with:
                   python-version: 3.8
-              if: env.GIT_DIFF
             - name: Linting
               run: |
                   python -m pip install --upgrade pip
@@ -75,7 +61,6 @@ jobs:
                   poetry install
                   poetry run make check
               working-directory: backend
-              if: env.GIT_DIFF
 
     test-server:
         runs-on: ubuntu-latest
@@ -92,34 +77,14 @@ jobs:
                   path: |
                       ~/.cache/pip
                       ~/.cache/pypoetry/cache
-                      /tmp/docker-registry
-                  key: pip-poetry-cache
-            - uses: actions/cache@v2
-              with:
-                  path: |
-                      /tmp/docker-registry
-                  key: docker-cache
-            - name: Start local registry
-              run: |
-                  docker run -d -p 5000:5000 --restart=always --name registry \
-                             -v /tmp/docker-registry:/var/lib/registry registry:2 && npx wait-on tcp:5000
-            - name: Pull or Build images
-              working-directory: backend
-              run: |
-                  for app in fastapi quart tornado; do
-                      APP_NAME=${app}_api
-                      docker pull localhost:5000/$APP_NAME || true
-                      cd $APP_NAME
-                      docker build -t localhost:5000/$APP_NAME --cache-from=localhost:5000/$APP_NAME:latest .
-                      cd -
-                      docker push localhost:5000/$APP_NAME || true
-                      docker tag localhost:5000/$APP_NAME $APP_NAME
-                  done
-            - name: Test Server
+                  key: pip-poetry-cache-${{ hashFiles('**/poetry.lock') }}
+                  restore-keys: |
+                      pip-poetry-cache-
+             - name: Test Server
               working-directory: server
               run: |
                   python -m pip install --upgrade pip
                   pip install poetry
                   echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
                   poetry install
-                  poetry run make test-ci
+                  poetry run make test
