@@ -93,7 +93,7 @@ jobs:
                       APP_NAME=${app}_api
                       docker pull localhost:5000/$APP_NAME:builder || true
                   done
-            - name: Build images
+            - name: Build builder images
               if: steps.cache.outputs.cache-hit != 'true'
               working-directory: backend
               run: |
@@ -104,6 +104,15 @@ jobs:
                       cd -
                       docker push localhost:5000/$APP_NAME:builder || true
                   done
+            - name: Build final images
+              working-directory: backend
+              run: |
+                  for app in fastapi quart tornado; do
+                      APP_NAME=${app}_api
+                      cd $APP_NAME
+                      docker build -t $APP_NAME --cache-from=localhost:5000/$APP_NAME:builder .
+                      cd -
+                  done
             - name: Test Server
               working-directory: server
               run: |
@@ -111,4 +120,4 @@ jobs:
                   pip install poetry
                   echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
                   poetry install
-                  poetry run make test
+                  poetry run pytest -sv
