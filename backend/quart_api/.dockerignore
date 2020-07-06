@@ -1,6 +1,6 @@
 .venv
-__pycache__
-*.orig
+**/__pycache__
+**/*.orig
 .coverage
 .dockerignore
 .pytest_cache

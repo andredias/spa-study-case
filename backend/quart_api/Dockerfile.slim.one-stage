@@ -1,20 +1,21 @@
 FROM python:3.8-slim
 
-RUN python -m venv /venv
+RUN python -m venv /venv && chown -R nobody:nogroup /venv
 ENV PATH=/venv/bin:${PATH}
+WORKDIR /app
+RUN chown -R nobody:nogroup /app
+
+USER nobody
 RUN pip install --no-cache-dir dumb-init poetry
 
-WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+COPY --chown=nobody:nogroup pyproject.toml poetry.lock ./
 RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev
 
 RUN chown -R nobody:nogroup /app
 COPY --chown=nobody:nogroup app /app
 COPY --chown=nobody:nogroup cert /app/cert
 COPY --chown=nobody:nogroup hypercorn.toml .
-
-USER nobody
 
 EXPOSE 8443
 ENTRYPOINT ["dumb-init", "--"]
