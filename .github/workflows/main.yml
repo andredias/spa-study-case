@@ -80,7 +80,7 @@ jobs:
                   key: pip-poetry-cache-${{ hashFiles('**/poetry.lock') }}
                   restore-keys: |
                       pip-poetry-cache-
-             - name: Test Server
+            - name: Test Server
               working-directory: server
               run: |
                   python -m pip install --upgrade pip
