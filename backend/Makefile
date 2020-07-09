@@ -8,3 +8,5 @@ check:
 	mypy quart_api
 	@echo
 	flake8 --config flake8.ini .
+
+test: check
