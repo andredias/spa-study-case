@@ -28,6 +28,7 @@ lib64
 # Unit test / coverage reports
 .coverage
 .tox
+htmlcov/
 
 # cache
 __pycache__
