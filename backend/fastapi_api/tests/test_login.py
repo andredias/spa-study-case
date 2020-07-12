@@ -1,27 +1,15 @@
-from typing import Dict
+from typing import Dict, List
 from unittest.mock import AsyncMock, patch
 
 from httpx import AsyncClient
-from pydantic.dataclasses import dataclass
 from pytest import mark
 
 
-@dataclass
-class User:
-    id: int = 1
-    name: str = 'Fulano'
-    email: str = 'fulano@email.com'
-    password: str = 'abc1234'
-
-
-user = User()
-get_user_mock = AsyncMock(return_value=user)
-
-
-@patch('app.routers.login.get_user', get_user_mock)
 @mark.asyncio
-async def test_successful_login(client: AsyncClient) -> None:
-    resp = await client.post('/login', json={'email': user.email, 'password': user.password})
+async def test_successful_login(users: List[Dict], client: AsyncClient) -> None:
+    email = users[0]['email']
+    password = users[0]['password']
+    resp = await client.post('/login', json={'email': email, 'password': password})
     assert resp.status_code == 200
     csrf, session_id = [set(cookie.split('; ')) for cookie in sorted(resp.headers.getlist('set-cookie'))]
     assert {'HttpOnly', 'Secure', 'SameSite=lax'} <= session_id
@@ -29,16 +17,19 @@ async def test_successful_login(client: AsyncClient) -> None:
     assert 'HttpOnly' not in csrf
 
 
-@patch('app.routers.login.get_user', get_user_mock)
 @patch('app.login.delete_session')
 @mark.asyncio
-async def test_successful_login_with_session_id(delete_session: AsyncMock, client: AsyncClient) -> None:
+async def test_successful_login_with_session_id(
+    delete_session: AsyncMock, users: List[Dict], client: AsyncClient
+) -> None:
     '''
     A user log in with an existing session_id which can be from the same user or not
     '''
     session_id = 'abcd1234'
     cookies = {'session_id': session_id}
-    resp = await client.post('/login', json={'email': user.email, 'password': user.password}, cookies=cookies)
+    email = users[0]['email']
+    password = users[0]['password']
+    resp = await client.post('/login', json={'email': email, 'password': password}, cookies=cookies)
     assert resp.status_code == 200
     assert resp.cookies['session_id'] != session_id
     assert resp.cookies['csrf']
@@ -47,7 +38,9 @@ async def test_successful_login_with_session_id(delete_session: AsyncMock, clien
 
 @mark.asyncio
 async def test_unsuccessful_login(client: AsyncClient) -> None:
-    resp = await client.post('/login', json={'email': user.email, 'password': user.password})
+    email = 'sicrano@email.com'
+    password = '12345'
+    resp = await client.post('/login', json={'email': email, 'password': password})
     assert resp.status_code == 404
     assert not bool(resp.headers.get('set-cookie'))
 

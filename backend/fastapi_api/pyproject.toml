@@ -15,6 +15,11 @@ loguru = "*"
 fakeredis = "*"
 aioredis = "*"
 email_validator = "*"
+passlib = {extras = ["argon2"], version = "*"}
+databases = "*"
+pony = "*"
+aiosqlite = "*"
+asyncpg = "*"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

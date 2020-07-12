@@ -1,9 +1,7 @@
-from typing import Dict
-
 from fastapi import APIRouter, Cookie, HTTPException, Response
 from pydantic import BaseModel, EmailStr
 
-from ..models import UserInfo, get_user
+from ..models import UserInfo, get_user_by_login
 from ..sessions import create_csrf, create_session, delete_session
 
 router = APIRouter()
@@ -15,8 +13,8 @@ class LoginInfo(BaseModel):
 
 
 @router.post('/login', response_model=UserInfo)
-async def login(rec: LoginInfo, response: Response, session_id: str = Cookie(None)) -> Dict:
-    user = await get_user(rec.email, rec.password)
+async def login(rec: LoginInfo, response: Response, session_id: str = Cookie(None)) -> UserInfo:
+    user = await get_user_by_login(rec.email, rec.password)
     if user is None:
         raise HTTPException(status_code=404, detail='invalid email or password')
     if session_id:
@@ -25,7 +23,7 @@ async def login(rec: LoginInfo, response: Response, session_id: str = Cookie(Non
     csrf_token = create_csrf(session_id)
     response.set_cookie(key='session_id', value=session_id, httponly=True, secure=True)
     response.set_cookie(key='csrf', value=csrf_token, secure=True)
-    return vars(user)
+    return user
 
 
 @router.post('/logout', responses={204: {"model": None}})
