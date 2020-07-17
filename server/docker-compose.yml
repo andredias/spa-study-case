@@ -27,7 +27,6 @@ services:
             - fastapi_api
             - quart_api
             - tornado_api
-            - redis
 
     redis:
         container_name: redis
@@ -37,6 +36,17 @@ services:
         networks:
             - backend
 
+    postgres:
+        container_name: postgres
+        image: postgres:alpine
+        networks:
+            - backend
+        shm_size: "512mb"
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB}
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
     fastapi_api:
         container_name: fastapi_api
         build: ../backend/fastapi_api
@@ -45,6 +55,9 @@ services:
             - backend
         env_file:
             - .env
+        depends_on:
+            - redis
+            - postgres
 
     quart_api:
         container_name: quart_api
@@ -54,6 +67,9 @@ services:
             - backend
         env_file:
             - .env
+        depends_on:
+            - redis
+            - postgres
 
     tornado_api:
         container_name: tornado_api
@@ -63,3 +79,6 @@ services:
             - backend
         env_file:
             - .env
+        depends_on:
+            - redis
+            - postgres
