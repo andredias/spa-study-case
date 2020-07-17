@@ -1,3 +1,4 @@
+from functools import partial
 from pathlib import Path
 
 from aioredis import create_redis_pool
@@ -7,6 +8,7 @@ from fakeredis.aioredis import create_redis_pool as fake_create_redis_pool
 from pony.orm import Database as SyncDatabase
 
 from . import config
+from .utils import wait_until_responsive
 
 redis: Redis = None
 async_db: AsyncDatabase = None
@@ -32,7 +34,8 @@ async def close_resources() -> None:
 async def _init_redis():
     global redis
     if config.ENV == 'production':
-        redis = await create_redis_pool((config.REDIS_HOST, config.REDIS_PORT), encoding='utf-8')
+        function = create_redis_pool(config.REDIS_URL, encoding='utf-8')
+        redis = await wait_until_responsive(function)
     else:
         redis = await fake_create_redis_pool(encoding='utf-8')
 
@@ -50,21 +53,21 @@ async def _init_database():
     which is asynchronous.
     '''
     global async_db
-    kwargs = {}
     if config.ENV == 'production':
+        connection_url = config.DATABASE_URL
         provider = 'postgres'
+        function = partial(pony_db.bind, provider=provider, dsn=connection_url)
+        await wait_until_responsive(function)
     else:
         provider = 'sqlite'
-        # both async_db and pony_db must use the same db
         filename = Path('/dev/shm/db.sqlite')
         filename.unlink(missing_ok=True)
         filename.touch()
-        kwargs['filename'] = str(filename)
+        pony_db.bind(provider, filename=str(filename))
         connection_url = f'sqlite:///{filename}'
 
-    pony_db.bind(provider=provider, **kwargs)
     pony_db.generate_mapping(create_tables=True)
-    async_db = AsyncDatabase(connection_url)
+    async_db = AsyncDatabase(connection_url, force_rollback=(config.ENV == 'testing'))
     await async_db.connect()
 
 

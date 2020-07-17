@@ -6,11 +6,11 @@ from typing import Union
 
 from dotenv import load_dotenv
 
+DATABASE_URL: str
 DEBUG: bool
 ENV: str
 LOG_LEVEL: str
-REDIS_HOST: str
-REDIS_PORT: str
+REDIS_URL: str
 SECRET_KEY: bytes
 SESSION_ID_LENGTH: int
 SESSION_LIFETIME: int
@@ -18,11 +18,11 @@ TESTING: bool
 
 
 def init(env_filename: Union[str, Path] = '.env') -> None:
+    global DATABASE_URL
     global DEBUG
     global ENV
     global LOG_LEVEL
-    global REDIS_HOST
-    global REDIS_PORT
+    global REDIS_URL
     global SECRET_KEY
     global SESSION_ID_LENGTH
     global SESSION_LIFETIME
@@ -44,5 +44,6 @@ def init(env_filename: Union[str, Path] = '.env') -> None:
     SESSION_ID_LENGTH = int(os.getenv('SESSION_ID_LENGTH', 16))
     SESSION_LIFETIME = int(timedelta(days=7).total_seconds())
 
-    REDIS_HOST = os.getenv('REDIS_HOST', 'redis')
-    REDIS_PORT = os.getenv('REDIS_PORT', '6379')
+    if ENV == 'production':
+        DATABASE_URL = os.environ['DATABASE_URL']
+        REDIS_URL = os.environ['REDIS_URL']

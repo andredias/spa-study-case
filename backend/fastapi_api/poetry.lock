@@ -410,6 +410,18 @@ python-versions = "*"
 version = "1.3.0"
 
 [[package]]
+category = "main"
+description = ".. image:: https://travis-ci.org/chtd/psycopg2cffi.svg?branch=master"
+name = "psycopg2cffi"
+optional = false
+python-versions = "*"
+version = "2.8.1"
+
+[package.dependencies]
+cffi = ">=1.0"
+six = "*"
+
+[[package]]
 category = "dev"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
 name = "py"
@@ -649,7 +661,7 @@ version = "0.15.0"
 h11 = ">=0.8.1"
 
 [metadata]
-content-hash = "6cdbfa175fbe467cc94df88f28c572bb18209fed23fa636ea8bbfd6595ae9600"
+content-hash = "14784c87686550e724415271031cfa719e79df709ea4eb58500c28c5c39c04e0"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -920,6 +932,9 @@ pony = [
 priority = [
     {file = "priority-1.3.0-py2.py3-none-any.whl", hash = "sha256:be4fcb94b5e37cdeb40af5533afe6dd603bd665fe9c8b3052610fc1001d5d1eb"},
     {file = "priority-1.3.0.tar.gz", hash = "sha256:6bc1961a6d7fcacbfc337769f1a382c8e746566aaa365e78047abe9f66b2ffbe"},
+]
+psycopg2cffi = [
+    {file = "psycopg2cffi-2.8.1.tar.gz", hash = "sha256:fcaa4d5477a8205b33e8e9e6707a5c331a0f5d7f4af354529b6564377b678079"},
 ]
 py = [
     {file = "py-1.9.0-py2.py3-none-any.whl", hash = "sha256:366389d1db726cd2fcfc79732e75410e5fe4d31db13692115529d34069a043c2"},

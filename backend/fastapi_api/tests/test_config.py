@@ -1,16 +1,9 @@
 import os
-from pathlib import Path
 from unittest.mock import patch
 
 from pytest import raises
 
 import app.config  # isort:skip
-
-
-@patch.dict('os.environ', clear=True)
-def test_testing_config() -> None:
-    app.config.init(Path(__file__).parent / 'env.test')
-    assert app.config.ENV == 'testing'
 
 
 @patch.dict('os.environ', clear=True)

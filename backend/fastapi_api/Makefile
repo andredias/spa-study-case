@@ -3,7 +3,11 @@ run:
 
 
 test:
-	pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/
+	ENV=testing pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/
+
+
+test_prod:
+	ENV=production pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/
 
 
 docker_build:
