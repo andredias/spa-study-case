@@ -1,3 +1,4 @@
 DB_NAME=spa_python_backend
-DATABASE_URL=postgresql://postgres:senha@localhost:5432/${DB_NAME}
+DB_PASSWORD=senha
+DATABASE_URL=postgresql://postgres:${DB_PASSWORD}@localhost:5432/${DB_NAME}
 REDIS_URL=redis://localhost:6379

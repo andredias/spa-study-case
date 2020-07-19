@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from subprocess import DEVNULL, check_call
 from typing import AsyncIterable, Dict, Generator, List
 
 from asgi_lifespan import LifespanManager
@@ -18,16 +19,18 @@ load_dotenv(Path(__file__).parent / 'env')
 @fixture(scope='session')
 def docker() -> Generator:
     if os.environ['ENV'] == 'production':
-        db_name = os.environ['DB_NAME']
-        os.system(
-            f'docker run -d --rm -e POSTGRES_DB={db_name} -e POSTGRES_PASSWORD=senha '
-            '-p 5432:5432 --name postgres postgres:alpine > /dev/null'
+        check_call(
+            f'docker run -d --rm -e POSTGRES_DB={os.environ["DB_NAME"]} '
+            f'-e POSTGRES_PASSWORD={os.environ["DB_PASSWORD"]} '
+            '-p 5432:5432 --name postgres postgres:alpine',
+            stdout=DEVNULL,
+            shell=True
         )
-        os.system('docker run -d --rm -p 6379:6379 --name redis redis:alpine > /dev/null')
+        check_call('docker run -d --rm -p 6379:6379 --name redis redis:alpine', stdout=DEVNULL, shell=True)
         try:
             yield
         finally:
-            os.system('docker stop postgres redis > /dev/null')
+            check_call('docker stop postgres redis', stdout=DEVNULL, shell=True)
     else:
         yield
 
