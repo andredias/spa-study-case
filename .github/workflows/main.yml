@@ -116,6 +116,6 @@ jobs:
               run: |
                   python -m pip install --upgrade pip
                   pip install poetry
-                  echo -e 'ENV=production\nDEFAULT_BACKEND_API=fastapi_api\n' > .env
                   poetry install
+                  poetry run make env_file
                   poetry run pytest -sv
