@@ -15,4 +15,4 @@ docker_build:
 
 
 docker_run: docker_build
-	docker run -it --rm -p 8443:8443 --env-file .env fastapi_api
+	docker run -it --rm -p 8443:8443 -e ENV=development fastapi_api
