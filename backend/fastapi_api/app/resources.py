@@ -1,3 +1,4 @@
+import os
 from functools import partial
 from pathlib import Path
 
@@ -67,7 +68,8 @@ async def _init_database():
         connection_url = f'sqlite:///{filename}'
 
     pony_db.generate_mapping(create_tables=True)
-    async_db = AsyncDatabase(connection_url, force_rollback=(config.ENV == 'testing'))
+    force_rollback = bool(os.getenv('FORCE_ROLLBACK'))
+    async_db = AsyncDatabase(connection_url, force_rollback=force_rollback)
     await async_db.connect()
 
 

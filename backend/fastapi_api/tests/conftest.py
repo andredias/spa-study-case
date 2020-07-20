@@ -10,8 +10,7 @@ from httpx import AsyncClient
 from pytest import fixture
 
 from app import create_app  # isort:skip
-from app import resources as res  # isort:skip
-from app.utils import crypt_ctx  # isort:skip
+from app.models import insert_user  # isort:skip
 
 load_dotenv(Path(__file__).parent / 'env')
 
@@ -50,14 +49,10 @@ async def client(app: FastAPI) -> AsyncIterable[AsyncClient]:
 
 @fixture
 async def users(app: FastAPI) -> List[Dict]:
-    query = 'INSERT INTO "user" (name, email, password_hash, admin) VALUES (:name, :email, :password_hash, :admin)'
-    password = 'Paulo Paulada Power'
-    values = [
-        dict(name='Fulano de Tal', email='fulano@email.com', password_hash=crypt_ctx.hash(password), admin=True),
-        dict(name='Beltrano de Tal', email='beltrano@email.com', password_hash=crypt_ctx.hash(password), admin=False),
+    users = [
+        dict(name='Fulano de Tal', email='fulano@email.com', password='Paulo Paulada Power', admin=True),
+        dict(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
     ]
-    await res.async_db.execute_many(query=query, values=values)
-    for v in values:
-        v['password'] = password
-        del v['password_hash']
-    return values
+    for user in users:
+        await insert_user(**user)  # type: ignore
+    return users

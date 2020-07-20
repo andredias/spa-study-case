@@ -1,4 +1,5 @@
 DB_NAME=spa_python_backend
 DB_PASSWORD=senha
 DB_HOST=localhost
+FORCE_ROLLBACK=1
 REDIS_URL=redis://localhost:6379
