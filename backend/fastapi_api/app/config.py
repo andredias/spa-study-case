@@ -45,5 +45,7 @@ def init(env_filename: Union[str, Path] = '.env') -> None:
     SESSION_LIFETIME = int(timedelta(days=7).total_seconds())
 
     if ENV == 'production':
-        DATABASE_URL = os.environ['DATABASE_URL']
+        DATABASE_URL = os.getenv('POSTGRES_URL') or \
+                       f'postgresql://postgres:{os.environ["DB_PASSWORD"]}' \
+                       f'@{os.environ["DB_HOST"]}:5432/{os.environ["DB_NAME"]}'
         REDIS_URL = os.environ['REDIS_URL']
