@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from subprocess import DEVNULL, check_call
-from typing import AsyncIterable, Dict, Generator, List
+from typing import AsyncIterable, Generator, List
 
 from asgi_lifespan import LifespanManager
 from dotenv import load_dotenv
@@ -10,7 +10,7 @@ from httpx import AsyncClient
 from pytest import fixture
 
 from app import create_app  # isort:skip
-from app.models import insert_user  # isort:skip
+from app.models.user import insert, UserRecordIn  # isort:skip
 
 load_dotenv(Path(__file__).parent / 'env')
 
@@ -48,11 +48,11 @@ async def client(app: FastAPI) -> AsyncIterable[AsyncClient]:
 
 
 @fixture
-async def users(app: FastAPI) -> List[Dict]:
+async def users(app: FastAPI) -> List[UserRecordIn]:
     users = [
-        dict(name='Fulano de Tal', email='fulano@email.com', password='Paulo Paulada Power', admin=True),
-        dict(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
+        UserRecordIn(name='Fulano de Tal', email='fulano@email.com', password='Paulo Paulada Power', admin=True),
+        UserRecordIn(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
     ]
     for user in users:
-        await insert_user(**user)  # type: ignore
+        await insert(user)  # type: ignore
     return users

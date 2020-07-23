@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Cookie, HTTPException, Response
 from pydantic import BaseModel, EmailStr
 
-from ..models import UserInfo, get_user_by_login
+from ..models.user import UserInfo, get_user_by_login
 from ..sessions import create_csrf, create_session, delete_session
 
 router = APIRouter()

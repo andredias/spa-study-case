@@ -1,20 +1,21 @@
 import secrets
-from typing import Optional
+from typing import Dict, Optional
 
 from pony.orm import PrimaryKey, Required
 from pydantic import BaseModel, EmailStr
 
-from . import resources as res
-from .utils import crypt_ctx, select
+from .. import resources as res
+from ..utils import crypt_ctx, select
+from . import _insert
+from . import update as _update
 
 MAX_ID = 2**32
 
 
-class UserRecord(BaseModel):
-    id: int
+class UserRecordIn(BaseModel):
     name: str
     email: EmailStr
-    password_hash: str
+    password: str
     admin: bool = False
 
 
@@ -45,15 +46,17 @@ async def get_user_by_login(email: str, password: str) -> Optional[UserInfo]:
     return None
 
 
-async def insert_user(name: str, email: str, password: str, admin: bool = False) -> None:
-    user = UserRecord(
-        id=secrets.randbelow(MAX_ID),
-        name=name,
-        password_hash=crypt_ctx.hash(password),
-        email=email,
-        admin=admin,
-    )
-    query = 'INSERT INTO "user" (id, name, email, password_hash, admin) ' \
-            'VALUES (:id, :name, :email, :password_hash, :admin)'
-    await res.async_db.execute(query, user.dict())
-    return
+async def insert(user: UserRecordIn) -> int:
+    fields = user.dict()
+    fields['id'] = secrets.randbelow(MAX_ID)
+    password = fields.pop('password')
+    fields['password_hash'] = crypt_ctx.hash(password)
+    await _insert('user', fields)
+    return fields['id']
+
+
+async def update(fields: Dict, id: int) -> None:
+    if 'password' in fields:
+        password = fields.pop('password')
+        fields['password_hash'] = crypt_ctx.hash(password)
+    await _update('user', fields, id)
