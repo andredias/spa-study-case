@@ -1,5 +1,6 @@
 from typing import Dict
 
+from loguru import logger
 from pydantic import BaseModel
 
 from .. import resources as res
@@ -9,26 +10,31 @@ async def _insert(table_name: str, values: Dict) -> None:
     fields = ', '.join(f'"{key}"' for key in values.keys())
     params = ', '.join(f':{key}' for key in values.keys())
     query = f'INSERT INTO "{table_name}" ({fields}) VALUES ({params})'
+    logger.debug(f'\nquery: {query}\nvalues: {values}')
     await res.async_db.execute(query, values)
     return
 
 
 async def insert(table_name: str, values: Dict) -> None:
     assert 'id' not in [key.lower() for key in values.keys()], 'ID should not be in the values'
+    assert values, 'values must contain at least one field and value'
     await _insert(table_name, values)
     return
 
 
 async def update(table_name: str, values: Dict, id: int) -> None:
     assert 'id' not in [key.lower() for key in values.keys()], 'ID should not be in the values'
+    assert values, 'values must contain at least one field and value'
     attributions = ', '.join(f'"{key}" = :{key}' for key in values.keys())
     query = f'UPDATE "{table_name}" SET {attributions} WHERE id = :id'
+    logger.debug(f'\nquery: {query}\nvalues: {values}\nid: {id}')
     await res.async_db.execute(query, {'id': id, **values})
     return
 
 
 async def delete(table_name: str, id: int) -> None:
     query = f'DELETE FROM "{table_name}" WHERE id = :id'
+    logger.debug(f'\nquery: {query}\nid: {id}')
     await res.async_db.execute(query, {'id': id})
     return
 
