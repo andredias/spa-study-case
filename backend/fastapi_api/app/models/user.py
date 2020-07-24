@@ -1,18 +1,22 @@
 import secrets
 from typing import Dict, Optional
 
+import ujson as json
 from pony.orm import PrimaryKey, Required
 from pydantic import BaseModel, EmailStr
 
+from .. import config
 from .. import resources as res
 from ..utils import crypt_ctx, select
 from . import _insert
+from . import delete as _delete
 from . import update as _update
 
 MAX_ID = 2**32
 
 
 class UserRecordIn(BaseModel):
+    id: Optional[int]
     name: str
     email: EmailStr
     password: str
@@ -46,8 +50,27 @@ async def get_user_by_login(email: str, password: str) -> Optional[UserInfo]:
     return None
 
 
+async def get_user(id: int) -> Optional[UserInfo]:
+    user_id = f'user:{id}'
+    # search on Redis first
+    result = await res.redis.get(user_id)
+    if result:
+        return UserInfo(**json.loads(result))
+
+    # search in the database
+    sql, values = select(user for user in User if user.id == id)  # type: ignore
+    result = await res.async_db.fetch_one(sql, values)
+    if result:
+        user = UserInfo(**result)
+        # update Redis with the record
+        await res.redis.set(user_id, user.json())
+        await res.redis.expire(user_id, config.SESSION_LIFETIME)
+        return user
+    return None
+
+
 async def insert(user: UserRecordIn) -> int:
-    fields = user.dict()
+    fields = user.dict(exclude={'id'})
     fields['id'] = secrets.randbelow(MAX_ID)
     password = fields.pop('password')
     fields['password_hash'] = crypt_ctx.hash(password)
@@ -60,3 +83,9 @@ async def update(fields: Dict, id: int) -> None:
         password = fields.pop('password')
         fields['password_hash'] = crypt_ctx.hash(password)
     await _update('user', fields, id)
+    await res.redis.delete(f'user:{id}')  # invalidate cache
+
+
+async def delete(id: int) -> None:
+    await _delete('user', id)
+    await res.redis.delete(f'user:{id}')

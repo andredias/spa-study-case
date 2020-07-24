@@ -54,5 +54,5 @@ async def users(app: FastAPI) -> List[UserRecordIn]:
         UserRecordIn(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
     ]
     for user in users:
-        await insert(user)  # type: ignore
+        user.id = await insert(user)  # type: ignore
     return users
