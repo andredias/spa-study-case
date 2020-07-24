@@ -10,39 +10,48 @@ from tornado.web import Application
 
 from . import config
 from .handlers import hello, login
-from .resources import close_resources, start_resources
+from .resources import shutdown, startup
+
+routes = [
+    ("/hello", hello.HelloHandler),
+    ("/login", login.LoginHandler),
+    ("/logout", login.LogoutHandler),
+]
 
 
 @contextmanager
 def create_app(env_filename: Union[str, Path] = '.env') -> Iterator[Application]:
     config.init(env_filename)
     setup_logger()
-    IOLoop.current().run_sync(start_resources)
-
+    IOLoop.current().run_sync(startup)
     try:
         # Application setup
-        app = Application([
-            ("/hello", hello.HelloHandler),
-            ("/login", login.LoginHandler),
-            ("/logout", login.LogoutHandler),
-        ],
-                          debug=config.DEBUG)
+        settings = {
+            "cookie_secret": config.SECRET_KEY,
+            # "xsrf_cookies": True,
+            "autoreload": True,
+            "debug": config.DEBUG,
+        }
+        app = Application(routes, **settings)
         yield app
     finally:
-        IOLoop.current().run_sync(close_resources)
+        IOLoop.current().run_sync(shutdown)
 
 
-def setup_logger():
+def setup_logger() -> None:
     '''
-    Configure Loguru's logger
+    Configure Loguru's logger and overwrite Tornado's default loggers
     '''
-    from . import config
+    from tornado import log as t
 
     logger.remove()  # remove standard handler
     logger.add(
         sys.stderr, level=config.LOG_LEVEL, colorize=True, backtrace=config.DEBUG, enqueue=True
     )  # reinsert it to make it run in a different thread
     logger.debug({key: getattr(config, key) for key in dir(config) if key == key.upper()})
+    # overwrite tornado's internal loggers to use loguru's logger
+    t.access_log = t.app_log = t.gen_log = logger
+    return
 
 
 if __name__ == '__main__':

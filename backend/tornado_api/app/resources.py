@@ -8,7 +8,7 @@ from . import config
 redis: Redis = None
 
 
-async def start_resources() -> None:
+async def startup() -> None:
     '''
     Initialize resources such as Redis and Database connections
     '''
@@ -17,13 +17,13 @@ async def start_resources() -> None:
         redis = await create_redis_pool((config.REDIS_HOST, config.REDIS_PORT), encoding='utf-8')
     else:
         redis = await fake_create_redis_pool(encoding='utf-8')
-    logger.info('resources started')
+    logger.info('started up')
 
 
-async def close_resources() -> None:
+async def shutdown() -> None:
     '''
     Release resources
     '''
     redis.close()
     await redis.wait_closed()
-    logger.info('resources closed')
+    logger.info('shut down')
