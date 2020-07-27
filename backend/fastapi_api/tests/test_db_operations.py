@@ -34,8 +34,9 @@ async def test_update(async_db):
     async_db.execute.assert_called_with(expected_query, {'id': 1, **values})
 
     # empty values
-    with raises(AssertionError):
+    with patch('app.resources.async_db', new_callable=AsyncMock) as db:
         await update('test', {}, 0)
+        db.execute.assert_not_awaited()
 
     # id into values
     with raises(AssertionError):
@@ -56,17 +57,16 @@ def test_diff_models():
         id: int
         name: str
         value: int
+        email: str
 
     class B(BaseModel):
-        id: int
         name: str
         email: str
 
-    a1 = A(id=1, name='A', value=2)
-    a2 = A(id=1, name='B', value=3)
-    assert diff_models(a1, a2) == dict(name='B', value=3)
-    assert diff_models(a2, a1) == dict(name='A', value=2)
+    a1 = A(id=1, name='A', value=2, email='fulano@email.com')
+    a2 = A(id=1, name='B', value=3, email='fulano@email.com')
+    assert diff_models(a1.dict(), a2.dict()) == dict(name='B', value=3)
+    assert diff_models(a2.dict(), a1.dict()) == dict(name='A', value=2)
 
     b = B(id=1, name='A', email='a@email.com')
-    with raises(AssertionError):
-        diff_models(a1, b)
+    assert diff_models(a1.dict(), b.dict()) == dict(email='a@email.com')
