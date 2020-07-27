@@ -26,7 +26,7 @@ async def login(rec: LoginInfo, response: Response, session_id: str = Cookie(Non
     return user
 
 
-@router.post('/logout', responses={204: {"model": None}})
+@router.post('/logout', status_code=204)
 async def logout(response: Response, session_id: str = Cookie(None)) -> None:
     if session_id is not None:
         await delete_session(session_id)
