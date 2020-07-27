@@ -7,7 +7,13 @@ from loguru import logger
 
 from . import config
 from .resources import close_resources, start_resources
-from .routers import hello, login
+from .routers import hello, login, user
+
+routers = [
+    hello.router,
+    login.router,
+    user.router,
+]
 
 
 def create_app(env_filename: Union[str, Path] = '.env') -> FastAPI:
@@ -15,8 +21,8 @@ def create_app(env_filename: Union[str, Path] = '.env') -> FastAPI:
     setup_logger()
 
     app = FastAPI()
-    app.include_router(hello.router)
-    app.include_router(login.router)
+    for router in routers:
+        app.include_router(router)
 
     @app.on_event('startup')
     async def startup_event():
