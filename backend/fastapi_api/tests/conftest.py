@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from subprocess import DEVNULL, check_call
-from typing import AsyncIterable, Generator, List
+from typing import Any, AsyncIterable, Dict, Generator, List
 
 from asgi_lifespan import LifespanManager
 from dotenv import load_dotenv
@@ -48,11 +48,11 @@ async def client(app: FastAPI) -> AsyncIterable[AsyncClient]:
 
 
 @fixture
-async def users(app: FastAPI) -> List[UserRecordIn]:
+async def users(app: FastAPI) -> List[Dict[str, Any]]:
     users = [
-        UserRecordIn(name='Fulano de Tal', email='fulano@email.com', password='Paulo Paulada Power', admin=True),
-        UserRecordIn(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
+        dict(name='Fulano de Tal', email='fulano@email.com', password='Paulo Paulada Power', admin=True),
+        dict(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
     ]
     for user in users:
-        user.id = await insert(user)  # type: ignore
+        user['id'] = await insert(UserRecordIn(**user))
     return users

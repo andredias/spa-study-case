@@ -1,16 +1,16 @@
-from typing import Dict, List
+from typing import Any, Dict, List
 from unittest.mock import AsyncMock, patch
 
 from httpx import AsyncClient
 from pytest import mark
 
-from app.models.user import UserRecordIn  # isort:skip
+ListDictStrAny = List[Dict[str, Any]]
 
 
 @mark.asyncio
-async def test_successful_login(users: List[UserRecordIn], client: AsyncClient) -> None:
-    email = users[0].email
-    password = users[0].password
+async def test_successful_login(users: ListDictStrAny, client: AsyncClient) -> None:
+    email = users[0]['email']
+    password = users[0]['password']
     resp = await client.post('/login', json={'email': email, 'password': password})
     assert resp.status_code == 200
     csrf, session_id = [set(cookie.split('; ')) for cookie in sorted(resp.headers.getlist('set-cookie'))]
@@ -22,15 +22,15 @@ async def test_successful_login(users: List[UserRecordIn], client: AsyncClient) 
 @patch('app.login.delete_session')
 @mark.asyncio
 async def test_successful_login_with_session_id(
-    delete_session: AsyncMock, users: List[UserRecordIn], client: AsyncClient
+    delete_session: AsyncMock, users: ListDictStrAny, client: AsyncClient
 ) -> None:
     '''
     A user log in with an existing session_id which can be from the same user or not
     '''
     session_id = 'abcd1234'
     cookies = {'session_id': session_id}
-    email = users[0].email
-    password = users[0].password
+    email = users[0]['email']
+    password = users[0]['password']
     resp = await client.post('/login', json={'email': email, 'password': password}, cookies=cookies)
     assert resp.status_code == 200
     assert resp.cookies['session_id'] != session_id
