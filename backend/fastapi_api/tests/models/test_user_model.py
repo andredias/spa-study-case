@@ -1,11 +1,12 @@
 from typing import Any, Dict, List
 from unittest.mock import AsyncMock, patch
 
+from loguru import logger
 from pytest import mark
 
 import app.resources as res  # isort:skip
 from app.models import diff_models  # isort:skip
-from app.models.user import get_user, get_user_by_login, UserInfo, update, delete  # isort:skip
+from app.models.user import get_user, get_user_by_login, UserInfo, UserRecordPatch, update, delete  # isort:skip
 
 ListDictStrAny = List[Dict[str, Any]]
 
@@ -45,21 +46,22 @@ async def test_get_user(users: ListDictStrAny) -> None:
 
 @mark.asyncio
 async def test_update_user(users: ListDictStrAny) -> None:
+    logger.info('Update password')
     user_data = users[0]
     orig_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     new_data = user_data.copy()
     new_data['password'] = 'espionage prewashed recognize ducktail'
-    await update(diff_models(user_data, new_data), user_data['id'])
+    fields = diff_models(UserInfo(**user_data), UserRecordPatch(**new_data))
+    await update(fields, user_data['id'])
     new_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     assert new_user['password_hash'] != orig_user['password_hash']
 
+    logger.info('Update name, email and admin')
     user_data = users[1]
     orig_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
-    new_data = user_data.copy()
-    new_data['name'] = 'Sicrano'
-    new_data['email'] = 'sicrano@email.com'
-    new_data['admin'] = True
-    await update(diff_models(user_data, new_data), user_data['id'])
+    patch = UserRecordPatch(name='Sicrano', email='sicrano@email.com', admin=True)
+    fields = diff_models(UserInfo(**user_data), patch)
+    await update(fields, user_data['id'])
     new_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     assert new_user['password_hash'] == orig_user['password_hash']
     for field in ('name', 'email', 'admin'):

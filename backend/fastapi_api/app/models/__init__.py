@@ -4,6 +4,7 @@ from typing import Mapping, MutableMapping, Tuple
 from loguru import logger
 from pony.orm.core import Query
 from pony.orm.core import select as _select
+from pydantic import BaseModel
 
 from .. import resources as res
 
@@ -84,9 +85,11 @@ async def delete(table_name: str, id: int) -> None:
     return
 
 
-def diff_models(from_: Mapping, to_: Mapping) -> MutableMapping:
+def diff_models(from_: BaseModel, to_: BaseModel) -> MutableMapping:
     '''
     Return a dict with differences of the second in relation to the first model.
     Useful for getting only the fields that have changed before an update, for example.
     '''
-    return {k: v for k, v in to_.items() if from_[k] != v}
+    from_dict = from_.dict()
+    to_dict = to_.dict(exclude_unset=True)
+    return {k: v for k, v in to_dict.items() if from_dict.get(k) != v}

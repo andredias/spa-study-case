@@ -34,7 +34,7 @@ async def get_user_info(id: int, current_user: UserInfo = Depends(authenticated_
 @router.put('/user/{id}', status_code=204)
 async def update_user(id: int, patch: UserRecordPatch, current_user: UserInfo = Depends(authenticated_user)):
     user = await _common_validation(id, current_user)
-    fields = diff_models(user.dict(), patch.dict(exclude_unset=True))
+    fields = diff_models(user, patch)
     await update(fields, id)
     return
 

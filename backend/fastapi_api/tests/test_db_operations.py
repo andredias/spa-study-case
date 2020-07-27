@@ -1,3 +1,4 @@
+from typing import Optional
 from unittest.mock import AsyncMock, patch
 
 from pydantic import BaseModel
@@ -60,13 +61,14 @@ def test_diff_models():
         email: str
 
     class B(BaseModel):
-        name: str
-        email: str
+        name: Optional[str]
+        value: Optional[str]
+        email: Optional[str]
 
     a1 = A(id=1, name='A', value=2, email='fulano@email.com')
     a2 = A(id=1, name='B', value=3, email='fulano@email.com')
-    assert diff_models(a1.dict(), a2.dict()) == dict(name='B', value=3)
-    assert diff_models(a2.dict(), a1.dict()) == dict(name='A', value=2)
+    assert diff_models(a1, a2) == dict(name='B', value=3)
+    assert diff_models(a2, a1) == dict(name='A', value=2)
 
     b = B(id=1, name='A', email='a@email.com')
-    assert diff_models(a1.dict(), b.dict()) == dict(email='a@email.com')
+    assert diff_models(a1, b) == dict(email='a@email.com')
