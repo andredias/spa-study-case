@@ -9,8 +9,10 @@ RANDOM_PASSWORD=$(shell date | md5sum | cut -f 1 -d ' ')
 run: env_file
 	docker-compose up --build
 
-env_file:
-	if [ ! -f '.env' ]; then sed "s/DB_PASSWORD=.*/DB_PASSWORD=$(RANDOM_PASSWORD)/" env.template > .env; fi
+.env:
+	sed "s/DB_PASSWORD=.*/DB_PASSWORD=$(RANDOM_PASSWORD)/" env.template > .env
+
+env_file: .env
 
 build:
 	docker-compose build
