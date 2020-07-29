@@ -35,10 +35,10 @@ async def close_resources() -> None:
 async def _init_redis():
     global redis
     if config.ENV == 'production':
-        function = create_redis_pool(config.REDIS_URL, encoding='utf-8')
+        function = create_redis_pool(config.REDIS_URL)
         redis = await wait_until_responsive(function)
     else:
-        redis = await fake_create_redis_pool(encoding='utf-8')
+        redis = await fake_create_redis_pool()
 
 
 async def _stop_redis():

@@ -2,7 +2,9 @@ import asyncio
 from time import sleep, time
 from typing import Any, Awaitable, Callable, Union
 
+import orjson
 from passlib.context import CryptContext
+from starlette.responses import JSONResponse
 
 crypt_ctx = CryptContext(schemes=['argon2'])
 
@@ -22,3 +24,9 @@ async def wait_until_responsive(
             pass
         sleep(interval)
     raise TimeoutError()
+
+
+class ORJSONResponse(JSONResponse):
+
+    def render(self, content: Any) -> bytes:
+        return orjson.dumps(content)

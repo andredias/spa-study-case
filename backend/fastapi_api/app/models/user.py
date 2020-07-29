@@ -1,7 +1,7 @@
 import secrets
 from typing import MutableMapping, Optional
 
-import ujson as json
+import orjson as json
 from loguru import logger
 from pony.orm import PrimaryKey, Required
 from pydantic import BaseModel, EmailStr

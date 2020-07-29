@@ -4,7 +4,7 @@ from hashlib import sha256
 from secrets import token_urlsafe
 from typing import Any, Dict, Optional
 
-import ujson as json
+import orjson as json
 from fastapi import Cookie, Header, HTTPException
 
 from . import config

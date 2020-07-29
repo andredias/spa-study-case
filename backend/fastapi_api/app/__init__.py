@@ -8,6 +8,7 @@ from loguru import logger
 from . import config
 from .resources import close_resources, start_resources
 from .routers import hello, login, user
+from .utils import ORJSONResponse
 
 routers = [
     hello.router,
@@ -20,7 +21,7 @@ def create_app(env_filename: Union[str, Path] = '.env') -> FastAPI:
     config.init(env_filename)
     setup_logger()
 
-    app = FastAPI()
+    app = FastAPI(default_response_class=ORJSONResponse)
     for router in routers:
         app.include_router(router)
 
