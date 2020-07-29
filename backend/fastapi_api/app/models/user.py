@@ -52,7 +52,7 @@ class User(res.pony_db.Entity):
 
 async def get_user_by_login(email: str, password: str) -> Optional[UserInfo]:
     sql, values = select(user for user in User if user.email == email)  # type: ignore
-    result = await res.async_db.fetch_one(sql, values)
+    result = await res.db.fetch_one(sql, values)
     if result and crypt_ctx.verify(password, result['password_hash']):
         return UserInfo(**result)
     return None
@@ -69,7 +69,7 @@ async def get_user(id: int) -> Optional[UserInfo]:
     # search in the database
     logger.debug(f'user {id} not cached')
     sql, values = select(user for user in User if user.id == id)  # type: ignore
-    result = await res.async_db.fetch_one(sql, values)
+    result = await res.db.fetch_one(sql, values)
     if result:
         user = UserInfo(**result)
         # update Redis with the record

@@ -56,7 +56,7 @@ async def _insert(table_name: str, values: Mapping) -> None:
     params = ', '.join(f':{key}' for key in values.keys())
     query = f'INSERT INTO "{table_name}" ({fields}) VALUES ({params})'
     logger.debug(f'\nquery: {query}\nvalues: {values}')
-    await res.async_db.execute(query, values)
+    await res.db.execute(query, values)
     return
 
 
@@ -74,14 +74,14 @@ async def update(table_name: str, values: Mapping, id: int) -> None:
     attributions = ', '.join(f'"{key}" = :{key}' for key in values.keys())
     query = f'UPDATE "{table_name}" SET {attributions} WHERE id = :id'
     logger.debug(f'\nquery: {query}\nvalues: {values}\nid: {id}')
-    await res.async_db.execute(query, {'id': id, **values})
+    await res.db.execute(query, {'id': id, **values})
     return
 
 
 async def delete(table_name: str, id: int) -> None:
     query = f'DELETE FROM "{table_name}" WHERE id = :id'
     logger.debug(f'\nquery: {query}\nid: {id}')
-    await res.async_db.execute(query, {'id': id})
+    await res.db.execute(query, {'id': id})
     return
 
 

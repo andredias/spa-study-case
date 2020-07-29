@@ -7,14 +7,14 @@ from pytest import mark, raises
 from app.models import insert, update, delete, diff_models  # isort:skip
 
 
-@patch('app.resources.async_db', new_callable=AsyncMock)
+@patch('app.resources.db', new_callable=AsyncMock)
 @mark.asyncio
-async def test_insert(async_db):
+async def test_insert(db):
     # ok
     values = {'name': 'fulano', 'email': 'fulano@email.com'}
     await insert('test', values)
     expected_query = 'INSERT INTO "test" ("name", "email") VALUES (:name, :email)'
-    async_db.execute.assert_called_with(expected_query, values)
+    db.execute.assert_called_with(expected_query, values)
 
     # empty values
     with raises(AssertionError):
@@ -25,17 +25,17 @@ async def test_insert(async_db):
         await insert('test', {'id': 1, **values})
 
 
-@patch('app.resources.async_db', new_callable=AsyncMock)
+@patch('app.resources.db', new_callable=AsyncMock)
 @mark.asyncio
-async def test_update(async_db):
+async def test_update(db):
     # ok
     values = {'name': 'fulano', 'email': 'fulano@email.com'}
     await update('test', values, 1)
     expected_query = 'UPDATE "test" SET "name" = :name, "email" = :email WHERE id = :id'
-    async_db.execute.assert_called_with(expected_query, {'id': 1, **values})
+    db.execute.assert_called_with(expected_query, {'id': 1, **values})
 
     # empty values
-    with patch('app.resources.async_db', new_callable=AsyncMock) as db:
+    with patch('app.resources.db', new_callable=AsyncMock) as db:
         await update('test', {}, 0)
         db.execute.assert_not_awaited()
 
@@ -44,12 +44,12 @@ async def test_update(async_db):
         await update('test', {'id': 1, **values}, 1)
 
 
-@patch('app.resources.async_db', new_callable=AsyncMock)
+@patch('app.resources.db', new_callable=AsyncMock)
 @mark.asyncio
-async def test_delete(async_db):
+async def test_delete(db):
     await delete('test', 1)
     expected_query = 'DELETE FROM "test" WHERE id = :id'
-    async_db.execute.assert_called_with(expected_query, {'id': 1})
+    db.execute.assert_called_with(expected_query, {'id': 1})
 
 
 def test_diff_models():

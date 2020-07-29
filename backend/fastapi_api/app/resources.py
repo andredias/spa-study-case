@@ -12,7 +12,7 @@ from . import config
 from .utils import wait_until_responsive
 
 redis: Redis = None
-async_db: AsyncDatabase = None
+db: AsyncDatabase = None
 pony_db: SyncDatabase = SyncDatabase()
 
 
@@ -53,7 +53,7 @@ async def _init_database():
     but the actual SQL commands will be executed asynchronously by the encore database,
     which is asynchronous.
     '''
-    global async_db
+    global db
     if config.ENV == 'production':
         connection_url = config.DATABASE_URL
         provider = 'postgres'
@@ -69,11 +69,11 @@ async def _init_database():
 
     pony_db.generate_mapping(create_tables=True)
     force_rollback = bool(os.getenv('FORCE_ROLLBACK'))
-    async_db = AsyncDatabase(connection_url, force_rollback=force_rollback)
-    await async_db.connect()
+    db = AsyncDatabase(connection_url, force_rollback=force_rollback)
+    await db.connect()
 
 
 async def _stop_database():
-    await async_db.disconnect()
+    await db.disconnect()
     # unbind pony_db database. Useful in tests
     pony_db.provider = pony_db.schema = None

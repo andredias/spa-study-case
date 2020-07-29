@@ -13,7 +13,7 @@ router = APIRouter()
 @router.get('/user', response_model=Sequence[UserInfo])
 async def get_users(admin: UserInfo = Depends(admin_user)) -> Sequence:
     query, values = select(user for user in User)  # type: ignore
-    result = (record async for record in res.async_db.iterate(query, values))
+    result = (record async for record in res.db.iterate(query, values))
     return [UserInfo(**record) async for record in result]
 
 

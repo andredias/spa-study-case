@@ -34,10 +34,10 @@ async def test_get_user(users: ListDictStrAny) -> None:
     assert await res.redis.get(user_key)  # user is in Redis cache
 
     # get user from Redis
-    with patch('app.resources.async_db', new_callable=AsyncMock) as async_db:
+    with patch('app.resources.db', new_callable=AsyncMock) as db:
         user = await get_user(user_id)
     assert user == UserInfo(**users[0])  # got the right user
-    assert async_db.called == 0  # did not reach the database
+    assert db.called == 0  # did not reach the database
 
     # inexistent user
     id_ = user_id + 1
@@ -48,21 +48,21 @@ async def test_get_user(users: ListDictStrAny) -> None:
 async def test_update_user(users: ListDictStrAny) -> None:
     logger.info('Update password')
     user_data = users[0]
-    orig_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
+    orig_user = await res.db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     new_data = user_data.copy()
     new_data['password'] = 'espionage prewashed recognize ducktail'
     fields = diff_models(UserInfo(**user_data), UserRecordPatch(**new_data))
     await update(fields, user_data['id'])
-    new_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
+    new_user = await res.db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     assert new_user['password_hash'] != orig_user['password_hash']
 
     logger.info('Update name, email and admin')
     user_data = users[1]
-    orig_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
+    orig_user = await res.db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     patch = UserRecordPatch(name='Sicrano', email='sicrano@email.com', admin=True)
     fields = diff_models(UserInfo(**user_data), patch)
     await update(fields, user_data['id'])
-    new_user = await res.async_db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
+    new_user = await res.db.fetch_one('SELECT * FROM "User" WHERE id = :id', dict(id=user_data['id']))
     assert new_user['password_hash'] == orig_user['password_hash']
     for field in ('name', 'email', 'admin'):
         assert new_user[field] != orig_user[field]
