@@ -7,7 +7,6 @@ from pytest import mark
 ListDictStrAny = List[Dict[str, Any]]
 
 
-@mark.asyncio
 async def test_successful_login(users: ListDictStrAny, client: AsyncClient) -> None:
     email = users[0]['email']
     password = users[0]['password']
@@ -20,7 +19,6 @@ async def test_successful_login(users: ListDictStrAny, client: AsyncClient) -> N
 
 
 @patch('app.login.delete_session')
-@mark.asyncio
 async def test_successful_login_with_session_id(
     delete_session: AsyncMock, users: ListDictStrAny, client: AsyncClient
 ) -> None:
@@ -38,7 +36,6 @@ async def test_successful_login_with_session_id(
     delete_session.assert_awaited_once_with(session_id)
 
 
-@mark.asyncio
 async def test_unsuccessful_login(client: AsyncClient) -> None:
     email = 'sicrano@email.com'
     password = '12345'
@@ -49,7 +46,6 @@ async def test_unsuccessful_login(client: AsyncClient) -> None:
 
 @patch('app.login.delete_session')
 @mark.parametrize('cookies,called', [({}, False), ({'session_id': 'abcd1234'}, True)])
-@mark.asyncio
 async def test_logout(delete_session: AsyncMock, cookies: Dict[str, str], called: bool, client: AsyncClient) -> None:
     resp = await client.post('/logout', cookies=cookies)
     cookies_headers = resp.headers.get('set-cookie')

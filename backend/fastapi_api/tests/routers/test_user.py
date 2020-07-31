@@ -2,7 +2,6 @@ from typing import Any, Dict, List
 
 from httpx import AsyncClient
 from loguru import logger
-from pytest import mark
 
 from ..utils import logged_session
 
@@ -11,7 +10,6 @@ from app.models.user import UserInfo, UserRecordIn, get_user, insert  # isort:sk
 ListDictStrAny = List[Dict[str, Any]]
 
 
-@mark.asyncio
 async def test_get_users(users: ListDictStrAny, client: AsyncClient) -> None:
     admin_id = users[0]['id']
     user_id = users[1]['id']
@@ -30,7 +28,6 @@ async def test_get_users(users: ListDictStrAny, client: AsyncClient) -> None:
     assert resp.status_code == 401
 
 
-@mark.asyncio
 async def test_get_user(users: ListDictStrAny, client: AsyncClient) -> None:
     admin_id = users[0]['id']
     user_id = users[1]['id']
@@ -62,7 +59,6 @@ async def test_get_user(users: ListDictStrAny, client: AsyncClient) -> None:
     assert resp.status_code == 401
 
 
-@mark.asyncio
 async def test_update_user(users: ListDictStrAny, client: AsyncClient) -> None:
     admin_id = users[0]['id']
     user_id = users[1]['id']
@@ -97,7 +93,6 @@ async def test_update_user(users: ListDictStrAny, client: AsyncClient) -> None:
     assert resp.status_code == 404
 
 
-@mark.asyncio
 async def test_delete_user(users: ListDictStrAny, client: AsyncClient) -> None:
     admin_id = users[0]['id']
     user_id = users[1]['id']

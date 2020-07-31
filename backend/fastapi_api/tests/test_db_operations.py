@@ -2,13 +2,12 @@ from typing import Optional
 from unittest.mock import AsyncMock, patch
 
 from pydantic import BaseModel
-from pytest import mark, raises
+from pytest import raises
 
 from app.models import insert, update, delete, diff_models  # isort:skip
 
 
 @patch('app.resources.db', new_callable=AsyncMock)
-@mark.asyncio
 async def test_insert(db):
     # ok
     values = {'name': 'fulano', 'email': 'fulano@email.com'}
@@ -26,7 +25,6 @@ async def test_insert(db):
 
 
 @patch('app.resources.db', new_callable=AsyncMock)
-@mark.asyncio
 async def test_update(db):
     # ok
     values = {'name': 'fulano', 'email': 'fulano@email.com'}
@@ -45,7 +43,6 @@ async def test_update(db):
 
 
 @patch('app.resources.db', new_callable=AsyncMock)
-@mark.asyncio
 async def test_delete(db):
     await delete('test', 1)
     expected_query = 'DELETE FROM "test" WHERE id = :id'

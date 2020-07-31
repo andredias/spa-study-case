@@ -1,11 +1,10 @@
 from unittest.mock import AsyncMock, Mock
 
-from pytest import mark, raises
+from pytest import raises
 
 from app.utils import wait_until_responsive  # isort:skip
 
 
-@mark.asyncio
 async def test_wait_until_responsive():
     sentinel = object()
 

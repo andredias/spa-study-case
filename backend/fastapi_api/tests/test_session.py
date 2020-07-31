@@ -2,14 +2,12 @@ from unittest.mock import AsyncMock, patch
 
 from fastapi import Depends, FastAPI
 from httpx import AsyncClient
-from pytest import mark
 
 from app.sessions import (  # isort:skip
     authenticated_session, create_csrf, create_session, delete_session, get_session, is_valid_csrf, session_exists
 )
 
 
-@mark.asyncio
 async def test_session(app: FastAPI) -> None:
     data = {'user_id': 1}
 
@@ -30,7 +28,6 @@ async def test_session(app: FastAPI) -> None:
 
 
 @patch('app.resources.redis', new_callable=AsyncMock)
-@mark.asyncio
 async def test_create_csrf(redis: AsyncMock, app: FastAPI) -> None:
     session_id = await create_session({'user_id': 12345})
     csrf = create_csrf(session_id)
@@ -38,7 +35,6 @@ async def test_create_csrf(redis: AsyncMock, app: FastAPI) -> None:
 
 
 @patch('app.resources.redis', new_callable=AsyncMock)
-@mark.asyncio
 async def test_expired_session(redis: AsyncMock, app: FastAPI) -> None:
     data = {'user_id': 1}
     session_id = await create_session(data)
@@ -48,7 +44,6 @@ async def test_expired_session(redis: AsyncMock, app: FastAPI) -> None:
     assert redis.expire.call_count == 2
 
 
-@mark.asyncio
 async def test_authenticated_session(app: FastAPI, client: AsyncClient):
 
     @app.get('/test_session')
