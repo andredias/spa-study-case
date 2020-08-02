@@ -1,7 +1,6 @@
 from unittest.mock import AsyncMock, patch
 
 from loguru import logger
-from pytest import mark
 from tornado.web import Application
 
 from app.sessions import (  # isort:skip
@@ -9,7 +8,6 @@ from app.sessions import (  # isort:skip
 )
 
 
-@mark.gen_test
 async def test_session(app: Application) -> None:
     data = {'user_id': 1}
     logger.debug('antes de create_session...')
@@ -32,14 +30,12 @@ async def test_session(app: Application) -> None:
     assert not await session_exists(session_id)
 
 
-@mark.gen_test
 async def test_create_csrf(app: Application) -> None:
     session_id = 'abcd1234'
     csrf = create_csrf(session_id)
     assert len(csrf) == len(session_id)
 
 
-@mark.gen_test
 async def test_expired_session(app: Application) -> None:
     data = {'user_id': 1}
     with patch('app.resources.redis', new=AsyncMock()) as redis:

@@ -1,11 +1,6 @@
-import json
-
-from pytest import mark
-from tornado.simple_httpclient import SimpleAsyncHTTPClient
+from httpx import AsyncClient
 
 
-@mark.gen_test
-async def test_hello(http_client: SimpleAsyncHTTPClient, base_url) -> None:
-    response = await http_client.fetch(f'{base_url}/hello')
-    data = json.loads(response.body)
-    assert data == {'hello': 'world'}
+async def test_hello(client: AsyncClient) -> None:
+    response = await client.get('/hello')
+    assert response.json() == {'hello': 'world'}
