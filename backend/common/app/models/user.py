@@ -3,17 +3,18 @@ from typing import MutableMapping, Optional
 
 import orjson as json
 from loguru import logger
+from passlib.context import CryptContext
 from pony.orm import PrimaryKey, Required
 from pydantic import BaseModel, EmailStr
 
 from .. import config
 from .. import resources as res
-from ..utils import crypt_ctx
 from . import _insert
 from . import delete as _delete
 from . import select
 from . import update as _update
 
+crypt_ctx = CryptContext(schemes=['argon2'])
 MAX_ID = 2**32
 
 

@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, Mock
 
 from pytest import raises
 
-from app.utils import wait_until_responsive  # isort:skip
+from app.resources import wait_until_responsive  # isort:skip
 
 
 async def test_wait_until_responsive():
