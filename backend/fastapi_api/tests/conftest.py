@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 from subprocess import DEVNULL, check_call
-from typing import Any, AsyncIterable, Dict, Generator, List
+from typing import AsyncIterable, Generator
 
 from asgi_lifespan import LifespanManager
 from dotenv import load_dotenv
@@ -9,8 +9,9 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from pytest import fixture
 
+from .common.fixtures import users  # noqa:F401
+
 from app import create_app  # isort:skip
-from app.models.user import insert, UserRecordIn  # isort:skip
 
 load_dotenv(Path(__file__).parent / 'env')
 
@@ -45,14 +46,3 @@ async def app(docker) -> AsyncIterable[FastAPI]:
 async def client(app: FastAPI) -> AsyncIterable[AsyncClient]:
     async with AsyncClient(app=app, base_url='http://testserver') as client:
         yield client
-
-
-@fixture
-async def users(app: FastAPI) -> List[Dict[str, Any]]:
-    users = [
-        dict(name='Fulano de Tal', email='fulano@email.com', password='Paulo Paulada Power', admin=True),
-        dict(name='Beltrano de Tal', email='beltrano@email.com', password='abcd1234', admin=False),
-    ]
-    for user in users:
-        user['id'] = await insert(UserRecordIn(**user))
-    return users

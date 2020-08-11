@@ -9,6 +9,7 @@ from aioredis import create_redis_pool
 from aioredis.commands import Redis
 from databases import Database as AsyncDatabase
 from fakeredis.aioredis import create_redis_pool as fake_create_redis_pool
+from loguru import logger
 from pony.orm import Database as SyncDatabase
 
 from . import config
@@ -18,20 +19,22 @@ db: AsyncDatabase = None
 pony_db: SyncDatabase = SyncDatabase()
 
 
-async def start_resources() -> None:
+async def startup() -> None:
     '''
     Initialize resources such as Redis and Database connections
     '''
     await _init_redis()
     await _init_database()
+    logger.info("started...")
 
 
-async def close_resources() -> None:
+async def shutdown() -> None:
     '''
     Release resources
     '''
     await _stop_redis()
     await _stop_database()
+    logger.info('...shut down')
 
 
 async def _init_redis():

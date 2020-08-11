@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from loguru import logger
 
 from app.auth import authenticated_session  # isort:skip
-from app.sessions import create_csrf, create_session, delete_session
+from app.sessions import create_csrf, create_session, delete_session  # isort:skip
 
 
 async def test_authenticated_session(app: FastAPI, client: AsyncClient):

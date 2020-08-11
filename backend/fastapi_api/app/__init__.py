@@ -8,7 +8,7 @@ from loguru import logger
 from starlette.responses import JSONResponse
 
 from . import config
-from .resources import close_resources, start_resources
+from .resources import shutdown, startup
 from .routers import hello, login, user
 
 routers = [
@@ -28,13 +28,11 @@ def create_app(env_filename: Union[str, Path] = '.env') -> FastAPI:
 
     @app.on_event('startup')
     async def startup_event():
-        logger.debug('startup...')
-        await start_resources()
+        await startup()
 
     @app.on_event('shutdown')
     async def shutdown_event():
-        logger.debug('...shutdown')
-        await close_resources()
+        await shutdown()
 
     return app
 
