@@ -1,8 +1,8 @@
 from pydantic import BaseModel, EmailStr, ValidationError
 from tornado.web import HTTPError
 
-from ..models import get_user
-from ..sessions import create_session, delete_session
+from ..models.user import get_user_by_login
+from ..sessions import create_csrf, create_session, delete_session
 from .base import BaseHandler
 
 
@@ -16,16 +16,17 @@ class LoginHandler(BaseHandler):
     async def post(self):
         try:
             rec = LoginInfo(**self.args)
-        except ValidationError:
-            raise HTTPError(400)
+        except ValidationError as error:
+            raise HTTPError(400, reason=error)
 
-        user = await get_user(rec.email, rec.password)
+        user = await get_user_by_login(rec.email, rec.password)
         if user is None:
             raise HTTPError(404, reason='invalid email or password')
         session_id = self.get_cookie('session_id')
         if session_id:
             await delete_session(session_id)
-        session_id, csrf_token = await create_session({'user_id': user.id})
+        session_id = await create_session({'user_id': user.id})
+        csrf_token = create_csrf(session_id)
         self.set_cookie(name='session_id', value=session_id, httponly=True, secure=True, samesite="lax")
         self.set_cookie(name='csrf', value=csrf_token, secure=True, samesite="lax")
         self.write(vars(user))

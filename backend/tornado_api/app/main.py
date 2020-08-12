@@ -9,13 +9,15 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application
 
 from . import config
-from .handlers import hello, login
+from .handlers import hello, login, user
 from .resources import shutdown, startup
 
 routes = [
     ("/hello", hello.HelloHandler),
     ("/login", login.LoginHandler),
     ("/logout", login.LogoutHandler),
+    ("/user", user.UserHandler),
+    (r"/user/(\d+)", user.UserHandler),
 ]
 
 
