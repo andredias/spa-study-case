@@ -17,6 +17,7 @@ async def test_get_users(users: ListDictStrAny, client: AsyncClient) -> None:
 
     await logged_session(client, admin_id)
     resp = await client.get(url)
+    assert resp.status_code == 200
     assert len(resp.json()) == 2
 
     await logged_session(client, user_id)
