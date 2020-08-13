@@ -6,13 +6,13 @@ test:
 	ENV=testing pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/ --cov ../common/app/
 
 
-test_prod:
+test-prod:
 	ENV=production pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/ --cov ../common/app/
 
 
-docker_build:
-	docker build -t fastapi_api .
+docker-build:
+	cd .. && docker build -t fastapi_api --build-arg API_DIR=fastapi_api -f Dockerfile.fastapi_api .
 
 
-docker_run: docker_build
+docker-run: docker-build
 	docker run -it --rm -p 8443:8443 -e ENV=development fastapi_api
