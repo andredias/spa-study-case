@@ -97,9 +97,7 @@ jobs:
               run: |
                   for app in fastapi quart tornado; do
                       APP_NAME=${app}_api
-                      cd $APP_NAME
-                      docker build --target builder -t localhost:5000/$APP_NAME:builder .
-                      cd -
+                      docker build --target builder -t localhost:5000/$APP_NAME:builder -f Dockerfile.$APP_NAME .
                       docker push localhost:5000/$APP_NAME:builder || true
                   done
             - name: Build final images
@@ -107,9 +105,7 @@ jobs:
               run: |
                   for app in fastapi quart tornado; do
                       APP_NAME=${app}_api
-                      cd $APP_NAME
-                      docker build -t $APP_NAME --cache-from=localhost:5000/$APP_NAME:builder .
-                      cd -
+                      docker build -t $APP_NAME --cache-from=localhost:5000/$APP_NAME:builder -f Dockerfile.$APP_NAME .
                   done
             - name: Test Server
               working-directory: server
