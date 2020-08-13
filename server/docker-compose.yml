@@ -52,8 +52,10 @@ services:
 
     fastapi_api:
         container_name: fastapi_api
-        build: ../backend/fastapi_api
-        image: fastapi_api
+        build:
+            context: ../backend
+            dockerfile: Dockerfile.fastapi_api
+        image: fastapi_api:latest
         networks:
             - backend
         env_file:
@@ -64,8 +66,10 @@ services:
 
     quart_api:
         container_name: quart_api
-        build: ../backend/quart_api
-        image: quart_api
+        build:
+            context: ../backend
+            dockerfile: Dockerfile.quart_api
+        image: quart_api:latest
         networks:
             - backend
         env_file:
@@ -76,8 +80,10 @@ services:
 
     tornado_api:
         container_name: tornado_api
-        build: ../backend/tornado_api
-        image: tornado_api
+        build:
+            context: ../backend
+            dockerfile: Dockerfile.tornado_api
+        image: tornado_api:latest
         networks:
             - backend
         env_file:
