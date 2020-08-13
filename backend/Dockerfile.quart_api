@@ -16,29 +16,27 @@ RUN python -m venv /venv
 ENV PATH=/venv/bin:/root/.poetry/bin:${PATH}
 RUN pip install --upgrade pip && pip install dumb-init
 
-WORKDIR /backend/tornado_api
-COPY tornado_api/pyproject.toml tornado_api/poetry.lock ./
+WORKDIR /backend/quart_api
+
+COPY quart_api/pyproject.toml quart_api/poetry.lock ./
 RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev
 
 
 
 FROM python:3.8-slim as final
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
-    apt-get install -y --no-install-recommends libpq-dev
 
 COPY --chown=nobody:nogroup --from=builder /venv /venv
 ENV PATH=/venv/bin:${PATH}
 
-WORKDIR /backend/tornado_api
+WORKDIR /backend/quart_api
 RUN chown -R nobody:nogroup .
-COPY --chown=nobody:nogroup tornado_api/app ./app
-COPY --chown=nobody:nogroup tornado_api/cert ./cert
-COPY --chown=nobody:nogroup common/app /backend/common/app
-COPY --chown=nobody:nogroup common/cert /backend/common/cert
+COPY --chown=nobody:nogroup quart_api/app ./app
+COPY --chown=nobody:nogroup common/cert ./cert
+COPY --chown=nobody:nogroup quart_api/hypercorn.toml .
 
 USER nobody
 
 EXPOSE 8443
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["python", "-m", "app.main"]
+CMD ["hypercorn", "--config=hypercorn.toml", "app:create_app()"]

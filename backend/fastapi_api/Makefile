@@ -11,7 +11,7 @@ test-prod:
 
 
 docker-build:
-	cd .. && docker build -t fastapi_api --build-arg API_DIR=fastapi_api -f Dockerfile.fastapi_api .
+	cd .. && docker build -t fastapi_api -f Dockerfile.fastapi_api .
 
 
 docker-run: docker-build

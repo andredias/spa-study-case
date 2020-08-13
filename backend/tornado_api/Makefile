@@ -7,7 +7,7 @@ test:
 
 
 docker-build:
-	cd .. && docker build -t tornado_api --build-arg API_DIR=tornado_api -f Dockerfile.tornado_api .
+	cd .. && docker build -t tornado_api -f Dockerfile.tornado_api .
 
 
 docker-run: docker-build
