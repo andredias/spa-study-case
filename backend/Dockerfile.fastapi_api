@@ -36,6 +36,7 @@ COPY --chown=nobody:nogroup ${API_DIR}/app ./app
 COPY --chown=nobody:nogroup ${API_DIR}/cert ./cert
 COPY --chown=nobody:nogroup ${API_DIR}/hypercorn.toml .
 COPY --chown=nobody:nogroup common/app /backend/common/app
+COPY --chown=nobody:nogroup common/cert /backend/common/cert
 
 USER nobody
 
