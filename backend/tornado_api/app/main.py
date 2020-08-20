@@ -1,4 +1,3 @@
-import sys
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, Union
@@ -24,7 +23,6 @@ routes = [
 @contextmanager
 def create_app(env_filename: Union[str, Path] = '.env') -> Iterator[Application]:
     config.init(env_filename)
-    setup_logger()
     IOLoop.current().run_sync(startup)
     try:
         # Application setup
@@ -38,22 +36,6 @@ def create_app(env_filename: Union[str, Path] = '.env') -> Iterator[Application]
         yield app
     finally:
         IOLoop.current().run_sync(shutdown)
-
-
-def setup_logger() -> None:
-    '''
-    Configure Loguru's logger and overwrite Tornado's default loggers
-    '''
-    from tornado import log as t
-
-    logger.remove()  # remove standard handler
-    logger.add(
-        sys.stderr, level=config.LOG_LEVEL, colorize=True, backtrace=config.DEBUG, enqueue=True
-    )  # reinsert it to make it run in a different thread
-    logger.debug({key: getattr(config, key) for key in dir(config) if key == key.upper()})
-    # overwrite tornado's internal loggers to use loguru's logger
-    t.access_log = t.app_log = t.gen_log = logger
-    return
 
 
 if __name__ == '__main__':

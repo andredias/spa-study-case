@@ -1,5 +1,6 @@
 import asyncio
 import os
+import sys
 from functools import partial
 from pathlib import Path
 from time import sleep, time
@@ -23,6 +24,7 @@ async def startup() -> None:
     '''
     Initialize resources such as Redis and Database connections
     '''
+    setup_logger()
     await _init_redis()
     await _init_database()
     logger.info("started...")
@@ -35,6 +37,46 @@ async def shutdown() -> None:
     await _stop_redis()
     await _stop_database()
     logger.info('...shut down')
+
+
+def setup_logger():
+    '''
+    Configure Loguru's logger
+    '''
+
+    _intercept_standard_logging_messages()
+    logger.remove()  # remove standard handler
+    logger.add(
+        sys.stderr, level=config.LOG_LEVEL, colorize=True, backtrace=config.DEBUG, enqueue=True
+    )  # reinsert it to make it run in a different thread
+    logger.debug({key: getattr(config, key) for key in dir(config) if key == key.upper()})
+
+
+def _intercept_standard_logging_messages():
+    '''
+    Intercept standard logging messages toward loguru's logger
+    ref: loguru README
+    '''
+    import logging
+
+    class InterceptHandler(logging.Handler):
+
+        def emit(self, record):
+            # Get corresponding Loguru level if it exists
+            try:
+                level = logger.level(record.levelname).name
+            except ValueError:
+                level = record.levelno
+
+            # Find caller from where originated the logged message
+            frame, depth = logging.currentframe(), 2
+            while frame.f_code.co_filename == logging.__file__:
+                frame = frame.f_back
+                depth += 1
+
+            logger.opt(depth=depth, exception=record.exc_info).log(level, record.getMessage())
+
+    logging.basicConfig(handlers=[InterceptHandler()], level=0)
 
 
 async def _init_redis():
