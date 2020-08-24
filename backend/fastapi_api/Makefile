@@ -1,5 +1,5 @@
 run:
-	hypercorn --reload --config=hypercorn.toml 'app:create_app()'
+	ENV=development hypercorn --reload --config=hypercorn.toml 'app:create_app()'
 
 
 test:

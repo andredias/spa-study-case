@@ -1,9 +1,9 @@
 run:
-	python -m app.main
+	ENV=development python -m app.main
 
 
 test:
-	pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/ --cov ../common/app/
+	ENV=testing pytest -x -v --cov-report term-missing --cov-report html --cov-branch --cov app/ --cov ../common/app/
 
 
 docker-build:
