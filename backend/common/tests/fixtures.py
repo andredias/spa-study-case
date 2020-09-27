@@ -35,4 +35,4 @@ def docker() -> Generator:
     try:
         yield
     finally:
-        check_call('docker stop postgres-testing redis-testing', stdout=DEVNULL, shell=True)
+        check_call('docker stop -t 0 postgres-testing redis-testing', stdout=DEVNULL, shell=True)
