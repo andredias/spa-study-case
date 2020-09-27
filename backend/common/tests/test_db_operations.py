@@ -1,52 +1,8 @@
 from typing import Optional
-from unittest.mock import AsyncMock, patch
 
 from pydantic import BaseModel
-from pytest import raises
 
-from app.models import insert, update, delete, diff_models  # isort:skip
-
-
-@patch('app.resources.db', new_callable=AsyncMock)
-async def test_insert(db):
-    # ok
-    values = {'name': 'fulano', 'email': 'fulano@email.com'}
-    await insert('test', values)
-    expected_query = 'INSERT INTO "test" ("name", "email") VALUES (:name, :email)'
-    db.execute.assert_called_with(expected_query, values)
-
-    # empty values
-    with raises(AssertionError):
-        await insert('test', {})
-
-    # id into values
-    with raises(AssertionError):
-        await insert('test', {'id': 1, **values})
-
-
-@patch('app.resources.db', new_callable=AsyncMock)
-async def test_update(db):
-    # ok
-    values = {'name': 'fulano', 'email': 'fulano@email.com'}
-    await update('test', values, 1)
-    expected_query = 'UPDATE "test" SET "name" = :name, "email" = :email WHERE id = :id'
-    db.execute.assert_called_with(expected_query, {'id': 1, **values})
-
-    # empty values
-    with patch('app.resources.db', new_callable=AsyncMock) as db:
-        await update('test', {}, 0)
-        db.execute.assert_not_awaited()
-
-    # id into values
-    with raises(AssertionError):
-        await update('test', {'id': 1, **values}, 1)
-
-
-@patch('app.resources.db', new_callable=AsyncMock)
-async def test_delete(db):
-    await delete('test', 1)
-    expected_query = 'DELETE FROM "test" WHERE id = :id'
-    db.execute.assert_called_with(expected_query, {'id': 1})
+from app.models import diff_models  # isort:skip
 
 
 def test_diff_models():

@@ -1,5 +1,6 @@
 DB_NAME=spa_python_backend
-DB_PASSWORD=senha
+DB_PASSWORD=testing-password
+DB_PORT=5431
 DB_HOST=localhost
-FORCE_ROLLBACK=1
-REDIS_URL=redis://localhost:6379
+REDIS_PORT=6378
+REDIS_URL=redis://localhost:6378

@@ -43,23 +43,26 @@ async def test_get_user(users: ListDictStrAny) -> None:
 
 async def test_update_user(users: ListDictStrAny) -> None:
     logger.info('Update password')
-    table_name = User._table_
     user_data = users[0]
-    orig_user = await res.db.fetch_one(f'SELECT * FROM "{table_name}" WHERE id = :id', dict(id=user_data['id']))
+    query = User.select(User.c.id == user_data['id'])
+    orig_user = await res.db.fetch_one(query)
     new_data = user_data.copy()
     new_data['password'] = 'espionage prewashed recognize ducktail'
     fields = diff_models(UserInfo(**user_data), UserRecordPatch(**new_data))
     await update(fields, user_data['id'])
-    new_user = await res.db.fetch_one(f'SELECT * FROM "{table_name}" WHERE id = :id', dict(id=user_data['id']))
+    query = User.select(User.c.id == user_data['id'])
+    new_user = await res.db.fetch_one(query)
     assert new_user['password_hash'] != orig_user['password_hash']
 
     logger.info('Update name, email and admin')
     user_data = users[1]
-    orig_user = await res.db.fetch_one(f'SELECT * FROM "{table_name}" WHERE id = :id', dict(id=user_data['id']))
+    query = User.select(User.c.id == user_data['id'])
+    orig_user = await res.db.fetch_one(query)
     patch = UserRecordPatch(name='Sicrano', email='sicrano@email.com', admin=True)
     fields = diff_models(UserInfo(**user_data), patch)
     await update(fields, user_data['id'])
-    new_user = await res.db.fetch_one(f'SELECT * FROM "{table_name}" WHERE id = :id', dict(id=user_data['id']))
+    query = User.select(User.c.id == user_data['id'])
+    new_user = await res.db.fetch_one(query)
     assert new_user['password_hash'] == orig_user['password_hash']
     for field in ('name', 'email', 'admin'):
         assert new_user[field] != orig_user[field]

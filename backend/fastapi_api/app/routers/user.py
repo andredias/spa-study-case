@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from .. import resources as res
 from ..auth import admin_user, authenticated_user
-from ..models import diff_models, select
+from ..models import diff_models
 from ..models.user import User, UserInfo, UserRecordPatch, delete, get_user, update
 
 router = APIRouter()
@@ -12,8 +12,8 @@ router = APIRouter()
 
 @router.get('/user', response_model=Sequence[UserInfo])
 async def get_users(admin: UserInfo = Depends(admin_user)) -> Sequence:
-    query, values = select(user for user in User)  # type: ignore
-    result = (record async for record in res.db.iterate(query, values))
+    query = User.select()
+    result = (record async for record in res.db.iterate(query))
     return [UserInfo(**record) async for record in result]
 
 

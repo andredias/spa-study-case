@@ -40,3 +40,4 @@ caddy/data/**/local
 
 # Redis
 server/redis
+node_modules
