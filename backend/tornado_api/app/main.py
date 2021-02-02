@@ -2,6 +2,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator, Union
 
+from dotenv import load_dotenv
 from loguru import logger
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
@@ -21,8 +22,10 @@ routes = [
 
 
 @contextmanager
-def create_app(env_filename: Union[str, Path] = '.env') -> Iterator[Application]:
-    config.init(env_filename)
+def create_app(env_filename: Union[str, Path] = None) -> Iterator[Application]:
+    if env_filename:
+        load_dotenv(env_filename)
+    config.init()
     IOLoop.current().run_sync(startup)
     try:
         # Application setup

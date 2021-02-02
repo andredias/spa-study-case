@@ -20,6 +20,7 @@ orjson = "*"
 aiosqlite = "*"
 asyncpg = "*"
 psycopg2cffi = "*"
+alembic = "^1.5.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "*"

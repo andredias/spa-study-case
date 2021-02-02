@@ -1,0 +1,28 @@
+version: "3.5"
+
+networks:
+    backend:
+        driver: host
+
+services:
+    redis:
+        container_name: redis
+        image: "redis:latest"
+        volumes:
+            - ./redis:/data
+        ports:
+            - "6379:6379"
+        networks:
+            - backend
+
+    postgres:
+        container_name: postgres
+        image: postgres:alpine
+        networks:
+            - backend
+        shm_size: "512mb"
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_DB: ${DB_NAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}

@@ -3,7 +3,7 @@ from pydantic import ValidationError
 from tornado.web import HTTPError
 
 from .. import resources as res
-from ..models import diff_models, select
+from ..models import diff_models
 from ..models.user import User, UserInfo, UserRecordPatch, delete, get_user, update
 from .base import BaseHandler
 
@@ -28,8 +28,8 @@ class UserHandler(BaseHandler):
         current_user = await self.current_user
         if not current_user.admin:
             raise HTTPError(403)
-        query, values = select(user for user in User)  # type: ignore
-        result = (record async for record in res.db.iterate(query, values))
+        query = User.select()
+        result = (record async for record in res.db.iterate(query))
         self.write([UserInfo(**record).dict() async for record in result])
 
     async def get(self, id=None) -> None:

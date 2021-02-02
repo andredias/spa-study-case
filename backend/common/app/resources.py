@@ -1,5 +1,6 @@
 import asyncio
 import sys
+from pathlib import Path
 from time import sleep, time
 from typing import Any, Awaitable, Callable, Union
 
@@ -22,7 +23,7 @@ async def startup() -> None:
     setup_logger()
     await _init_redis()
     await _init_database()
-    logger.info("started...")
+    logger.info('started...')
 
 
 async def shutdown() -> None:
@@ -133,11 +134,12 @@ async def wait_until_responsive(
 
 
 def migrate_database():
-    from sqlalchemy import create_engine
+    from alembic.config import Config
+    from alembic.command import upgrade
 
-    from .models import metadata
-
-    connection_url = config.DATABASE_URL.replace('postgresql', 'postgresql+psycopg2cffi')
-    engine = create_engine(connection_url)
-    metadata.create_all(engine)
+    root_dir = Path(__file__).parent.parent
+    alembic_cfg = Config(str(root_dir / 'alembic/alembic.ini'))
+    alembic_cfg.set_main_option('script_location', str(root_dir / 'alembic'))
+    upgrade(alembic_cfg, 'head')
     return
+

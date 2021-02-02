@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import AsyncIterable, Iterator
 
+from dotenv import load_dotenv
 from httpx import AsyncClient
 from pytest import fixture
 from tornado.httpserver import HTTPServer
@@ -9,9 +10,12 @@ from tornado.platform.asyncio import AsyncIOLoop
 from tornado.testing import bind_unused_port
 from tornado.web import Application
 
-from .common.fixtures import users  # noqa: F401
+from .common.fixtures import docker, users  # noqa: F401
 
 from app.main import create_app  # isort:skip
+
+
+load_dotenv(Path(__file__).parent / 'env')
 
 
 @fixture
@@ -26,11 +30,11 @@ def io_loop() -> AsyncIOLoop:
 
 
 @fixture
-def app(io_loop: AsyncIOLoop) -> Iterator[Application]:
+def app(docker, io_loop: AsyncIOLoop) -> Iterator[Application]:
     """
     Return a Tornado.web.Application object with initialized resources
     """
-    with create_app(Path(__file__).parent / "env.test") as app:
+    with create_app() as app:
         yield app
 
 

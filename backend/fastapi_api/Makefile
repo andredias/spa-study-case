@@ -1,5 +1,8 @@
+POSTGRESQL_RUNNING = $(shell docker ps | grep postgres-development)
+REDIS_RUNNING = $(shell docker ps | grep redis-development)
+
 run:
-	ENV=development hypercorn --reload --config=hypercorn.toml 'app:create_app()'
+	hypercorn --reload --config=hypercorn.toml 'app:create_app()'
 
 
 test:
@@ -12,3 +15,14 @@ docker-build:
 
 docker-run: docker-build
 	docker run -it --rm -p 8443:8443 -e ENV=development fastapi_api
+
+
+start-containers:
+	docker-compose up -d
+
+
+stop-postgres:
+	@ if [ -n "$(POSTGRESQL_RUNNING)" ]; then \
+	echo 'Stopping PostgreSQL...'; \
+	docker stop postgres-development; \
+	fi
