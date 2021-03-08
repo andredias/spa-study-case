@@ -44,6 +44,8 @@ services:
         networks:
             - backend
         shm_size: "512mb"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data/
         ports:
             - "5432:5432"
         environment:
@@ -91,3 +93,6 @@ services:
         depends_on:
             - redis
             - postgres
+
+volumes:
+    postgres_data:
