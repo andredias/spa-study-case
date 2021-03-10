@@ -1,5 +1,5 @@
 run:
-	ENV=development python -m app.main
+	python -m app.main .env
 
 
 test:

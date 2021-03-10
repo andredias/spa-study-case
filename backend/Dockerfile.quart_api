@@ -32,7 +32,6 @@ ENV PATH=/venv/bin:${PATH}
 WORKDIR /backend/quart_api
 RUN chown -R nobody:nogroup .
 COPY --chown=nobody:nogroup quart_api/app ./app
-COPY --chown=nobody:nogroup common/cert ./cert
 COPY --chown=nobody:nogroup quart_api/hypercorn.toml .
 
 USER nobody

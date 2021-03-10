@@ -42,13 +42,12 @@ def create_app(env_filename: Union[str, Path] = None) -> Iterator[Application]:
 
 
 if __name__ == '__main__':
-    import ssl
+    import sys
 
-    with create_app() as app:
-        port = 8443
-        ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        ssl_ctx.load_cert_chain('cert/server.pem', 'cert/server.key')
-        http_server = HTTPServer(app, ssl_options=ssl_ctx)
+    env_filename = '' if len(sys.argv) == 1 else sys.argv[1]
+    with create_app(env_filename) as app:
+        port = 8000
+        http_server = HTTPServer(app)
         http_server.listen(port)
         logger.info(f'Listening to port {port} over https (use CTRL + C to quit)')
         IOLoop.current().start()

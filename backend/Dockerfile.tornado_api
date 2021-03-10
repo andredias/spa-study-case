@@ -33,9 +33,7 @@ ENV PATH=/venv/bin:${PATH}
 WORKDIR /backend/tornado_api
 RUN chown -R nobody:nogroup .
 COPY --chown=nobody:nogroup tornado_api/app ./app
-COPY --chown=nobody:nogroup tornado_api/cert ./cert
 COPY --chown=nobody:nogroup common/app /backend/common/app
-COPY --chown=nobody:nogroup common/cert /backend/common/cert
 
 USER nobody
 

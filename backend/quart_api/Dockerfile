@@ -27,7 +27,6 @@ ENV PATH=/venv/bin:${PATH}
 WORKDIR /app
 RUN chown -R nobody:nogroup /app
 COPY --chown=nobody:nogroup app /app
-COPY --chown=nobody:nogroup cert /app/cert
 COPY --chown=nobody:nogroup hypercorn.toml .
 
 USER nobody

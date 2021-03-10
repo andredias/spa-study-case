@@ -34,10 +34,8 @@ ENV PATH=/venv/bin:${PATH}
 WORKDIR /backend/fastapi_api
 RUN chown -R nobody:nogroup .
 COPY --chown=nobody:nogroup fastapi_api/app ./app
-COPY --chown=nobody:nogroup fastapi_api/cert ./cert
 COPY --chown=nobody:nogroup fastapi_api/hypercorn.toml .
 COPY --chown=nobody:nogroup common/app /backend/common/app
-COPY --chown=nobody:nogroup common/cert /backend/common/cert
 
 USER nobody
 

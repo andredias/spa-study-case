@@ -142,4 +142,3 @@ def migrate_database():
     alembic_cfg.set_main_option('script_location', str(root_dir / 'alembic'))
     upgrade(alembic_cfg, 'head')
     return
-
