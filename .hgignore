@@ -1,6 +1,5 @@
 syntax: glob
 
-.vscode
 .venv
 .env
 *~
