@@ -1,4 +1,4 @@
-FROM python:3.8-alpine as builder
+FROM python:3-alpine as builder
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -17,7 +17,7 @@ RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev
 
 
 
-FROM python:3.8-alpine as final
+FROM python:3-alpine as final
 
 RUN apk --no-cache add libstdc++
 
