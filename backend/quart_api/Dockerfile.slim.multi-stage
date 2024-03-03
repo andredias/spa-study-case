@@ -1,4 +1,4 @@
-FROM python:3.8-slim as builder
+FROM python:3.13.0a3-slim as builder
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
     apt-get -y upgrade && \
@@ -17,7 +17,7 @@ RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev
 
 
 
-FROM python:3.8-slim as final
+FROM python:3.13.0a3-slim as final
 
 COPY --chown=nobody:nogroup --from=builder /venv /venv
 ENV PATH=/venv/bin:${PATH}
