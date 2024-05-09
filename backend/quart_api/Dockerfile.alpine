@@ -1,4 +1,4 @@
-FROM python:3.8-alpine as builder
+FROM python:3.13.0b1-alpine as builder
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
@@ -17,7 +17,7 @@ RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-dev
 
 
 
-FROM python:3.8-alpine as final
+FROM python:3.13.0b1-alpine as final
 
 COPY --chown=nobody:nogroup --from=builder /venv /venv
 ENV PATH=/venv/bin:${PATH}
